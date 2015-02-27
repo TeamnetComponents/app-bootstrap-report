@@ -1,8 +1,10 @@
 package ro.teamnet.bootstrap.service;
 
+import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.springframework.stereotype.Service;
 import ro.teamnet.bootstrap.domain.ReportMetadata;
+import ro.teamnet.solutions.reportinator.convert.DataSourceConverter;
 import ro.teamnet.solutions.reportinator.convert.jasper.BeanCollectionJasperDataSourceConverter;
 import ro.teamnet.solutions.reportinator.export.JasperReportExporter;
 import ro.teamnet.solutions.reportinator.export.jasper.type.ExportType;
@@ -25,14 +27,16 @@ public class ReportsServiceImpl implements ReportsService {
     @Inject
     private JasperReportGenerator.Builder reportBuilder;
 
-    public <T> OutputStream reportFrom(Collection<T> beanOrMapCollection, ReportMetadata reportMetadata, OutputStream reportOutputStream) {
-        // Stub code below
+    public <T> OutputStream reportFrom(Collection<T> dataSourceAsCollection, ReportMetadata reportMetadata, OutputStream reportOutputStream) {
+        // WARNING: Stub code below
+        // A converter
+        DataSourceConverter<Collection<T>, JRDataSource> dataSourceConverter = new BeanCollectionJasperDataSourceConverter<T>(reportMetadata.getFieldMetadata());
+        JRDataSource datasource = dataSourceConverter.convert(dataSourceAsCollection);
         ReportGenerator<JasperPrint> reportGenerator =
                 this.reportBuilder.withTitle(reportMetadata.getTitle())
-                        .withDatasource(new BeanCollectionJasperDataSourceConverter<T>(reportMetadata.getFieldMetadata()).convert(beanOrMapCollection))
+                        .withDatasource(datasource)
                         .withTableColumnsMetadata(reportMetadata.getFieldsAndTableColumnMetadata())
                         .build();
-
         JasperReportExporter.export(reportGenerator, reportOutputStream, ExportType.PDF);
 
         return reportOutputStream;
