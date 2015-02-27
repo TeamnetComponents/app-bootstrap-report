@@ -1,4 +1,4 @@
-package ro.teamnet.bootstrap.rest;
+package ro.teamnet.bootstrap.web.rest;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
