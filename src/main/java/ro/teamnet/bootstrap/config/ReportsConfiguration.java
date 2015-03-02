@@ -20,7 +20,6 @@ public class ReportsConfiguration {
      * @return
      */
     @Bean
-    @Scope("prototype")
     public JasperReportGenerator.Builder reportBuilder() {
 
         return JasperReportGenerator.builder();
