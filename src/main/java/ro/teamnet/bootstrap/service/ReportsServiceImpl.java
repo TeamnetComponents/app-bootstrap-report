@@ -22,7 +22,7 @@ import java.util.Collection;
  * @version 1.0 Date: 2/27/2015
  */
 @Service
-public abstract class ReportsServiceImpl implements ReportsService {
+public class ReportsServiceImpl implements ReportsService {
 
     private JasperReportGenerator.Builder reportBuilder;
 
