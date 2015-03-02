@@ -17,9 +17,12 @@ public class ReportMetadata {
 
     private final Collection<?> dataSource;
 
-    public ReportMetadata(Collection<?> dataSource, Map<String, String> fieldsAndTableColumnMetadata) {
+    private final Map<String, Object> parametersMap;
+
+    public ReportMetadata(Collection<?> dataSource, Map<String, String> fieldsAndTableColumnMetadata, Map<String, Object> parametersMap) {
         this.dataSource = dataSource;
         this.fieldsAndTableColumnMetadata = fieldsAndTableColumnMetadata;
+        this.parametersMap = parametersMap;
     }
 
     public String getTitle() {
@@ -44,5 +47,9 @@ public class ReportMetadata {
 
     public Collection<String> getTableColumnMetadata() {
         return this.fieldsAndTableColumnMetadata.values();
+    }
+
+    public Map<String, Object> getParametersMap() {
+        return parametersMap;
     }
 }

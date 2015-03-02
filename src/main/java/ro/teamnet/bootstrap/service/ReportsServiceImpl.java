@@ -31,12 +31,16 @@ public class ReportsServiceImpl implements ReportsService {
         // WARNING: Stub code below
         // A converter
         DataSourceConverter<Collection<T>, JRDataSource> dataSourceConverter = new BeanCollectionJasperDataSourceConverter<T>(reportMetadata.getFieldMetadata());
+        // Obtain data source from converter
         JRDataSource datasource = dataSourceConverter.convert(dataSourceAsCollection);
+        // Create a generator using metadata and above data source
         ReportGenerator<JasperPrint> reportGenerator =
                 this.reportBuilder.withTitle(reportMetadata.getTitle())
                         .withDatasource(datasource)
                         .withTableColumnsMetadata(reportMetadata.getFieldsAndTableColumnMetadata())
+                        .withParameters(reportMetadata.getParametersMap())
                         .build();
+        // Export // TODO Maybe we should run this export, on another thread?
         JasperReportExporter.export(reportGenerator, reportOutputStream, ExportType.PDF);
 
         return reportOutputStream;
