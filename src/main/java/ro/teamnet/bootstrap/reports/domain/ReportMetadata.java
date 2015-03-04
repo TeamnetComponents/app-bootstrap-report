@@ -1,26 +1,32 @@
-package ro.teamnet.bootstrap.domain;
+package ro.teamnet.bootstrap.reports.domain;
 
 import java.util.Collection;
 import java.util.Map;
 
 /**
- * TODO Documentation
+ * Metadata related to report generation.
  *
  * @author Bogdan.Stefan
  * @version 1.0 Date: 2/27/2015
  */
 public class ReportMetadata {
 
+    /**
+     * The report's title.
+     */
     private String title;
 
+    /**
+     * The field and column metadata information.
+     */
     private final Map<String, String> fieldsAndTableColumnMetadata;
 
-    private final Collection<?> dataSource;
-
+    /**
+     * Extra parameters, to be used as {@link net.sf.jasperreports.engine.JRParameter JRParameter} values, at runtime.
+     */
     private final Map<String, Object> parametersMap;
 
-    public ReportMetadata(Collection<?> dataSource, Map<String, String> fieldsAndTableColumnMetadata, Map<String, Object> parametersMap) {
-        this.dataSource = dataSource;
+    public ReportMetadata(Map<String, String> fieldsAndTableColumnMetadata, Map<String, Object> parametersMap) {
         this.fieldsAndTableColumnMetadata = fieldsAndTableColumnMetadata;
         this.parametersMap = parametersMap;
     }
@@ -35,10 +41,6 @@ public class ReportMetadata {
 
     public Map<String, String> getFieldsAndTableColumnMetadata() {
         return fieldsAndTableColumnMetadata;
-    }
-
-    public Collection<?> getDataSource() {
-        return dataSource;
     }
 
     public Collection<String> getFieldMetadata() {
