@@ -7,6 +7,7 @@ import ro.teamnet.bootstrap.extend.AppRepository;
 import ro.teamnet.bootstrap.extend.Filters;
 import ro.teamnet.bootstrap.reports.domain.Report;
 import ro.teamnet.bootstrap.reports.domain.ReportMetadata;
+import ro.teamnet.bootstrap.service.AbstractServiceImpl;
 import ro.teamnet.solutions.reportinator.convert.DataSourceConverter;
 import ro.teamnet.solutions.reportinator.convert.jasper.BeanCollectionJasperDataSourceConverter;
 import ro.teamnet.solutions.reportinator.export.JasperReportExporter;
@@ -17,6 +18,7 @@ import ro.teamnet.solutions.reportinator.generation.ReportGenerator;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * An abstract (template) class, which offers {@link ro.teamnet.bootstrap.reports.service.ReportsService} functionality.
@@ -26,17 +28,23 @@ import java.util.Collection;
  * @author Bogdan.Stefan
  * @version 1.0 Date: 2/27/2015
  */
-public abstract class AbstractReportsService<T> implements ReportsService<T> {
+public class AbstractReportsService<T extends Serializable, ID extends Serializable>
+        extends AbstractServiceImpl<T, ID> implements ReportsService {
 
-    @Override
-    public OutputStream reportFrom(Report report, OutputStream reportOutputStream) {
-        return reportFrom(report.getMetadata(), report.getFilters(), report.getSort(), reportOutputStream);
+    public AbstractReportsService(AppRepository<T, ID> repository) {
+        super(repository);
     }
 
     @Override
-    public OutputStream reportFrom(ReportMetadata metadata, Filters filters, Sort sortOptions, OutputStream reportOutputStream) {
+    public OutputStream exportFrom(Report report, OutputStream reportOutputStream) {
+        return exportFrom(report.getMetadata(), report.getFilters(), report.getSort(), reportOutputStream);
+    }
+
+    @Override
+    public OutputStream exportFrom(ReportMetadata metadata, Filters filters, Sort sortOptions, OutputStream reportOutputStream) {
         // Obtain entity collection
-        Collection<T> entityCollection = this.getRepository().<T>findAll(filters, sortOptions);
+//        List<T> entityCollection = this.getRepository().<T>findAll(filters, sortOptions);
+        List<T> entityCollection = getRepository().findAll(filters, sortOptions);
         // A converter
         DataSourceConverter<Collection<T>, JRDataSource> dataSourceConverter =
                 new BeanCollectionJasperDataSourceConverter<T>(metadata.getFieldMetadata());
@@ -54,12 +62,12 @@ public abstract class AbstractReportsService<T> implements ReportsService<T> {
         return reportOutputStream;
     }
 
-    /**
-     * Returns the corresponding {@link org.springframework.stereotype.Repository @Repository} implementation, for this
-     * {@link org.springframework.stereotype.Service @Service} implementation.
-     *
-     * @param <ID> The type of the {@code ID}entifier for the domain entity, handled by the service.
-     * @return The specific repository this service uses for its domain entity management operations.
-     */
-    public abstract <ID extends Serializable> AppRepository<T, ID> getRepository();
+//    /**
+//     * Returns the corresponding {@link org.springframework.stereotype.Repository @Repository} implementation, for this
+//     * {@link org.springframework.stereotype.Service @Service} implementation.
+//     *
+//     * @param <ID> The type of the {@code ID}entifier for the domain entity, handled by the service.
+//     * @return The specific repository this service uses for its domain entity management operations.
+//     */
+//    public abstract <ID extends Serializable> AppRepository<T, ID> getRepository();
 }

@@ -3,12 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <properties>
-        <reportinator.version>1.0-BOOTSTRAP</reportinator.version>
-        <app-bootstrap-commons.version>0.2</app-bootstrap-commons.version>
-    </properties>
 
-
+    <!-- Parent(s) -->
     <parent>
         <groupId>ro.teamnet.bootstrap</groupId>
         <artifactId>bootstrap-dependencies</artifactId>
@@ -19,6 +15,12 @@
     <groupId>ro.teamnet.bootstrap</groupId>
     <artifactId>app-bootstrap-reports</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <!-- Dependencies - versions -->
+    <properties>
+        <reportinator.version>1.0-BOOTSTRAP</reportinator.version>
+        <app-bootstrap-commons.version>0.2-SNAPSHOT</app-bootstrap-commons.version>
+    </properties>
     <!-- Dependencies -->
     <dependencies>
         <dependency>
