@@ -15,10 +15,11 @@
     <groupId>ro.teamnet.bootstrap</groupId>
     <artifactId>app-bootstrap-reports</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <!-- Dependencies - versions -->
     <properties>
-        <reportinator.version>1.0-BOOTSTRAP</reportinator.version>
+        <reportinator.version>1.0.1-BOOTSTRAP</reportinator.version>
         <app-bootstrap-commons.version>0.2-SNAPSHOT</app-bootstrap-commons.version>
     </properties>
     <!-- Dependencies -->

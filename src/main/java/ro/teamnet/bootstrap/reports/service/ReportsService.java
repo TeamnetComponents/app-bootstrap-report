@@ -4,11 +4,12 @@ import org.springframework.data.domain.Sort;
 import ro.teamnet.bootstrap.extend.Filters;
 import ro.teamnet.bootstrap.reports.domain.Report;
 import ro.teamnet.bootstrap.reports.domain.ReportMetadata;
+import ro.teamnet.solutions.reportinator.export.jasper.type.ExportType;
 
 import java.io.OutputStream;
 
 /**
- * Interface for {@link org.springframework.stereotype.Service} implementations that deal with report generation
+ * Interface for {@link org.springframework.stereotype.Service Service} implementations that deal with report generation
  * and exporting.
  *
  * @author Bogdan.Stefan
@@ -16,9 +17,27 @@ import java.io.OutputStream;
  */
 public interface ReportsService {
 
-    OutputStream exportFrom(Report report, OutputStream reportOutputStream);
+    /**
+     * TODO Doc
+     *
+     * @param report
+     * @param exportType
+     * @param reportOutputStream
+     * @return
+     */
+    void exportFrom(Report report, ExportType exportType, OutputStream reportOutputStream)  ;
 
-    OutputStream exportFrom(ReportMetadata metadata, Filters filters, Sort sortOptions, OutputStream reportOutputStream);
+    /**
+     * TODO Doc
+     *
+     * @param metadata
+     * @param exportType
+     * @param filters
+     * @param sortOptions
+     * @param intoOutputStream
+     * @return
+     */
+    void exportFrom(ReportMetadata metadata, ExportType exportType, Filters filters, Sort sortOptions, OutputStream intoOutputStream);
 
 //    /**
 //     * A method, to be implemented by concrete implementations of this class, which returns the corresponding

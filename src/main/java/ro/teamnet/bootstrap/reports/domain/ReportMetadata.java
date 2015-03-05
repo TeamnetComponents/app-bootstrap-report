@@ -19,16 +19,14 @@ public class ReportMetadata {
     /**
      * The field and column metadata information.
      */
-    private final Map<String, String> fieldsAndTableColumnMetadata;
+    private Map<String, String> fieldsAndTableColumnMetadata;
 
     /**
      * Extra parameters, to be used as {@link net.sf.jasperreports.engine.JRParameter JRParameter} values, at runtime.
      */
-    private final Map<String, Object> parametersMap;
+    private Map<String, Object> extraParametersMap;
 
-    public ReportMetadata(Map<String, String> fieldsAndTableColumnMetadata, Map<String, Object> parametersMap) {
-        this.fieldsAndTableColumnMetadata = fieldsAndTableColumnMetadata;
-        this.parametersMap = parametersMap;
+    public ReportMetadata() {
     }
 
     public String getTitle() {
@@ -51,7 +49,15 @@ public class ReportMetadata {
         return this.fieldsAndTableColumnMetadata.values();
     }
 
-    public Map<String, Object> getParametersMap() {
-        return parametersMap;
+    public Map<String, Object> getExtraParametersMap() {
+        return extraParametersMap;
+    }
+
+    public void setFieldsAndTableColumnMetadata(Map<String, String> fieldsAndTableColumnMetadata) {
+        this.fieldsAndTableColumnMetadata = fieldsAndTableColumnMetadata;
+    }
+
+    public void setExtraParametersMap(Map<String, Object> extraParametersMap) {
+        this.extraParametersMap = extraParametersMap;
     }
 }

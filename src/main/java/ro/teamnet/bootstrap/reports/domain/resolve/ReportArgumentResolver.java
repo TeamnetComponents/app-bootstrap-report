@@ -6,6 +6,8 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import ro.teamnet.bootstrap.extend.AppFilterHandlerMethodArgumentResolver;
+import ro.teamnet.bootstrap.extend.AppSortHandlerMethodArgumentResolver;
 import ro.teamnet.bootstrap.extend.Filters;
 import ro.teamnet.bootstrap.reports.domain.Report;
 import ro.teamnet.bootstrap.reports.domain.ReportMetadata;
@@ -17,7 +19,7 @@ import ro.teamnet.bootstrap.reports.domain.ReportMetadata;
  * @author Bogdan.Stefan
  * @version 1.0 Date: 3/4/2015
  */
-public class ReportResolver implements HandlerMethodArgumentResolver {
+public class ReportArgumentResolver implements HandlerMethodArgumentResolver {
 
     /**
      *  A resolver for {@link ro.teamnet.bootstrap.reports.domain.ReportMetadata}.
@@ -45,9 +47,9 @@ public class ReportResolver implements HandlerMethodArgumentResolver {
      * @param filtersResolver  A resolver for {@code Filters}.
      * @param sortResolver     A resolver for {@code Sort}.
      */
-    public ReportResolver(HandlerMethodArgumentResolver metadataResolver,
-                          HandlerMethodArgumentResolver filtersResolver,
-                          HandlerMethodArgumentResolver sortResolver) {
+    public ReportArgumentResolver(ReportMetadataArgumentResolver metadataResolver,
+                                  AppFilterHandlerMethodArgumentResolver filtersResolver,
+                                  AppSortHandlerMethodArgumentResolver sortResolver) {
         this.metadataResolver = metadataResolver;
         this.filtersResolver = filtersResolver;
         this.sortResolver = sortResolver;

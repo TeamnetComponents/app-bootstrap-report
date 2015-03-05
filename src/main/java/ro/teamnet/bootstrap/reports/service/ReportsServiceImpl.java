@@ -22,52 +22,47 @@ import java.util.List;
 
 /**
  * An abstract (template) class, which offers {@link ro.teamnet.bootstrap.reports.service.ReportsService} functionality.
- * This class must be extended by any {@link org.springframework.stereotype.Service} which intends to offer support
- * for report generation.
+ * This class must be extended by any {@link org.springframework.stereotype.Service @Service} that intends to offer support
+ * for report generation for the managed entity types.
  *
  * @author Bogdan.Stefan
  * @version 1.0 Date: 2/27/2015
  */
-public class AbstractReportsService<T extends Serializable, ID extends Serializable>
+public class ReportsServiceImpl<T extends Serializable, ID extends Serializable>
         extends AbstractServiceImpl<T, ID> implements ReportsService {
 
-    public AbstractReportsService(AppRepository<T, ID> repository) {
+    public ReportsServiceImpl(AppRepository<T, ID> repository) {
         super(repository);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public OutputStream exportFrom(Report report, OutputStream reportOutputStream) {
-        return exportFrom(report.getMetadata(), report.getFilters(), report.getSort(), reportOutputStream);
+    public void exportFrom(Report report, ExportType exportType, OutputStream reportOutputStream) {
+        exportFrom(report.getMetadata(), exportType, report.getFilters(), report.getSort(), reportOutputStream);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public OutputStream exportFrom(ReportMetadata metadata, Filters filters, Sort sortOptions, OutputStream reportOutputStream) {
+    public void exportFrom(ReportMetadata metadata, ExportType exportType, Filters filters, Sort sortOptions, OutputStream intoOutputStream) {
         // Obtain entity collection
-//        List<T> entityCollection = this.getRepository().<T>findAll(filters, sortOptions);
-        List<T> entityCollection = getRepository().findAll(filters, sortOptions);
+        List<T> entityCollection = super.getRepository().findAll(filters, sortOptions);
         // A converter
         DataSourceConverter<Collection<T>, JRDataSource> dataSourceConverter =
                 new BeanCollectionJasperDataSourceConverter<T>(metadata.getFieldMetadata());
         // Obtain data source from converter
         JRDataSource dataSource = dataSourceConverter.convert(entityCollection);
         // Create a generator using metadata and above data source
-        ReportGenerator<JasperPrint> reportGenerator = JasperReportGenerator.builder().withTitle(metadata.getTitle())
+        ReportGenerator<JasperPrint> reportGenerator = JasperReportGenerator.builder()
+                .withTitle(metadata.getTitle())
                 .withDatasource(dataSource)
                 .withTableColumnsMetadata(metadata.getFieldsAndTableColumnMetadata())
-                .withParameters(metadata.getParametersMap())
+                .withParameters(metadata.getExtraParametersMap())
                 .build();
-        // Export // TODO Maybe we should run this export, on another thread?
-        JasperReportExporter.export(reportGenerator, reportOutputStream, ExportType.PDF);
-
-        return reportOutputStream;
+        // Export
+        JasperReportExporter.export(reportGenerator, intoOutputStream, exportType);
     }
-
-//    /**
-//     * Returns the corresponding {@link org.springframework.stereotype.Repository @Repository} implementation, for this
-//     * {@link org.springframework.stereotype.Service @Service} implementation.
-//     *
-//     * @param <ID> The type of the {@code ID}entifier for the domain entity, handled by the service.
-//     * @return The specific repository this service uses for its domain entity management operations.
-//     */
-//    public abstract <ID extends Serializable> AppRepository<T, ID> getRepository();
 }

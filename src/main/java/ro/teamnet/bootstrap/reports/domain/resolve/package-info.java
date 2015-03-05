@@ -1,5 +1,5 @@
 /**
- * Contains extra resolvers (based on
+ * Contains extra argument resolvers (based on
  * {@link org.springframework.web.method.support.HandlerMethodArgumentResolver HandlerMethodArgumentResolver}
  * implementations) for domain entities.
  *

@@ -10,6 +10,6 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0 Date: 2/27/2015
  */
 @Configuration
-@ComponentScan("ro.teamnet.bootstrap.service")
+@ComponentScan("ro.teamnet.bootstrap.reports")
 public class ReportsConfiguration {
 }
