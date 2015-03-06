@@ -32,6 +32,13 @@ import java.util.List;
 public abstract class AbstractReportsService<T extends Serializable, ID extends Serializable>
         extends AbstractServiceImpl<T, ID> implements ReportsService, AbstractService<T, ID> {
 
+    /**
+     * Sole constructor. Receives an {@link ro.teamnet.bootstrap.extend.AppRepository} concrete implementation, usually
+     * through <em>Dependency Injection</em>, and uses this {@link org.springframework.stereotype.Repository @Repository} instance
+     * to pull report data from the persistence layer.
+     *
+     * @param repository A {@code Repository} to pull entity data from.
+     */
     public AbstractReportsService(AppRepository<T, ID> repository) {
         super(repository);
     }
