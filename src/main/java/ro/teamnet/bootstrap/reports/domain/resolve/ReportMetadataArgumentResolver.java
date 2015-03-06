@@ -21,16 +21,28 @@ import java.util.Map;
  */
 public class ReportMetadataArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private static final String TITLE_REQUEST_PARAMETER_NAME = "reportsTitleMeta";
-    private static final String FIELD_COLUMN_REQUEST_PARAMETER_NAME = "reportsFieldsColumnMeta";
-    private static final String EXTRA_PARAMS_REQUEST_PARAMETER_NAME = "reportsExtraParams";
+    private static final String TITLE_REQUEST_PARAMETER_NAME = "reportTitle";
+    private static final String FIELD_COLUMN_REQUEST_PARAMETER_NAME = "reportFieldsColumnMeta";
+    private static final String EXTRA_PARAMS_REQUEST_PARAMETER_NAME = "reportExtraParams";
 
+    /**
+     * Method to test if a given {@link org.springframework.core.MethodParameter} can be resolved into an
+     * {@link ro.teamnet.bootstrap.reports.domain.Report}, using this resolver.
+     *
+     * @param parameter The parameter to be resolved.
+     * @return {@code true} if it can be resolved, {@code false} otherwise.
+     */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.getParameterType().equals(ReportMetadata.class) &&
                 parameter.hasParameterAnnotation(RequestBody.class);
     }
 
+    /**
+     * Handles requests for {@link ro.teamnet.bootstrap.reports.domain.ReportMetadata}.
+     * <p/>
+     * {@inheritDoc}
+     */
     @Override
     public ReportMetadata resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                           NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
@@ -42,14 +54,10 @@ public class ReportMetadataArgumentResolver implements HandlerMethodArgumentReso
         reportMetadata.setTitle(reportTitle);
         // Fields and column metadata
         String reportFieldsColumnsMeta = webRequest.getParameter(FIELD_COLUMN_REQUEST_PARAMETER_NAME);
-//        Map<String, String> fieldsColumnMetaMap =
-//                new JSONDeserializer<Map<String, String>>().deserialize(reportFieldsColumnsMeta, Map.class);
         Map<String, String> fieldsColumnMetaMap =
                 objectMapper.<Map<String, String>>readValue(reportFieldsColumnsMeta, objectMapper.constructType(HashMap.class));
         // Extra parameters metadata
         String reportExtraParamsMeta = webRequest.getParameter(EXTRA_PARAMS_REQUEST_PARAMETER_NAME);
-//        Map<String, Object> reportExtraParamMetasMap =
-//                new JSONDeserializer<Map<String, Object>>().deserialize(reportExtraParamsMeta, Map.class);
         Map<String, Object> reportExtraParamMetasMap =
                 objectMapper.<Map<String, Object>>readValue(reportExtraParamsMeta, objectMapper.constructType(HashMap.class));
         reportMetadata.setFieldsAndTableColumnMetadata(fieldsColumnMetaMap);

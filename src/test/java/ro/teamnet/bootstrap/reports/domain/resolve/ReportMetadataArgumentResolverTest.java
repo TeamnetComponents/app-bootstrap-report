@@ -12,15 +12,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * TODO Documentation (test description)
+ * Contains tests related to {@link ro.teamnet.bootstrap.reports.domain.resolve.ReportMetadataArgumentResolver}.
  *
  * @author Bogdan.Stefan
  */
 public class ReportMetadataArgumentResolverTest {
 
-    private static final String TITLE_REQUEST_PARAMETER_NAME = "reportsTitleMeta";
-    private static final String FIELD_COLUMN_REQUEST_PARAMETER_NAME = "reportsFieldsColumnMeta";
-    private static final String EXTRA_PARAMS_REQUEST_PARAMETER_NAME = "reportsExtraParams";
+    private static final String TITLE_REQUEST_PARAMETER_NAME = "reportTitle";
+    private static final String FIELD_COLUMN_REQUEST_PARAMETER_NAME = "reportFieldsColumnMeta";
+    private static final String EXTRA_PARAMS_REQUEST_PARAMETER_NAME = "reportExtraParams";
 
     private static final String REPORT_TITLE_REQUEST_PARAM_VALUE = "A test report title";
     private static final String REPORT_FIELD_COLUMN_JSON_REQUEST_PARAM_VALUE =
@@ -32,9 +32,9 @@ public class ReportMetadataArgumentResolverTest {
             "{" +
                     " \"ReportinatorReportSubTitle\" : \"A test report subtitle\"" +
                     "}";
-    private ReportMetadataArgumentResolver reportMetadataArgumentResolver;
     private NativeWebRequest mockRequest;
-    private MethodParameter mockMParameter;
+    private MethodParameter mockMethodParameter;
+    private ReportMetadataArgumentResolver reportMetadataArgumentResolver;
 
     @Before
     public void setUp() throws Exception {
@@ -49,27 +49,31 @@ public class ReportMetadataArgumentResolverTest {
         when(mockRequest.getParameter(EXTRA_PARAMS_REQUEST_PARAMETER_NAME))
                 .thenReturn(REPORT_EXTRA_PARAMS_JSON_REQUEST_PARAM_VALUE);
         // Establishes MethodParameter
-        mockMParameter = mock(MethodParameter.class);
+        mockMethodParameter = mock(MethodParameter.class);
         Class reportMetadataClass = ReportMetadata.class;
         Class requestBodyAnnotationClass = RequestBody.class;
-        when(mockMParameter.getParameterType()).thenReturn(reportMetadataClass);
-        when(mockMParameter.hasParameterAnnotation(requestBodyAnnotationClass)).thenReturn(true);
+        when(mockMethodParameter.getParameterType()).thenReturn(reportMetadataClass);
+        when(mockMethodParameter.hasParameterAnnotation(requestBodyAnnotationClass)).thenReturn(true);
     }
 
     @Test
     public void testResolverSupportsReportDataParameter() {
-        assertTrue(reportMetadataArgumentResolver.supportsParameter(mockMParameter));
+        assertTrue("Given MethodParameter should have been supported by resolver.",
+                reportMetadataArgumentResolver.supportsParameter(mockMethodParameter));
     }
 
     @Test
     public void testArgumentResolverReturnsAReportMetadataInstance() throws Exception {
-        ReportMetadata reportMetadata = reportMetadataArgumentResolver.resolveArgument(mockMParameter, null, mockRequest, null);
-        assertNotNull(reportMetadata);
+        ReportMetadata reportMetadata =
+                reportMetadataArgumentResolver.resolveArgument(mockMethodParameter, null, mockRequest, null);
+        assertNotNull("Should have returned a non-null reference.", reportMetadata);
     }
 
     @Test
     public void testArgumentResolverReturnsAValidReportMetadataInstance() throws Exception {
-        ReportMetadata reportMetadata = reportMetadataArgumentResolver.resolveArgument(mockMParameter, null, mockRequest, null);
-        assertEquals("Resolved ReportMetadata instance title field is not valid.", reportMetadata.getTitle(), REPORT_TITLE_REQUEST_PARAM_VALUE);
+        ReportMetadata reportMetadata =
+                reportMetadataArgumentResolver.resolveArgument(mockMethodParameter, null, mockRequest, null);
+        assertEquals("Resolved ReportMetadata instance title field is not valid. It does not match expected value.",
+                reportMetadata.getTitle(), REPORT_TITLE_REQUEST_PARAM_VALUE);
     }
 }

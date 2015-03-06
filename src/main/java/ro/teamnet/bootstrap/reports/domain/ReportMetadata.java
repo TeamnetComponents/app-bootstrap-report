@@ -4,7 +4,8 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Metadata related to report generation.
+ * Metadata related to report generation. This class holds various report characteristics (such as title, subtitle,
+ * extra parameters, etc.)
  *
  * @author Bogdan.Stefan
  * @version 1.0 Date: 2/27/2015
@@ -57,6 +58,10 @@ public class ReportMetadata {
         this.fieldsAndTableColumnMetadata = fieldsAndTableColumnMetadata;
     }
 
+    /**
+     *  Sets extra parameters for a report, to be used as {@link net.sf.jasperreports.engine.JRParameter JRParameter}
+     *  values, at runtime.
+     */
     public void setExtraParametersMap(Map<String, Object> extraParametersMap) {
         this.extraParametersMap = extraParametersMap;
     }

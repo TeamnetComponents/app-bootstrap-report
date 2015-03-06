@@ -7,6 +7,7 @@ import ro.teamnet.bootstrap.extend.AppRepository;
 import ro.teamnet.bootstrap.extend.Filters;
 import ro.teamnet.bootstrap.reports.domain.Report;
 import ro.teamnet.bootstrap.reports.domain.ReportMetadata;
+import ro.teamnet.bootstrap.service.AbstractService;
 import ro.teamnet.bootstrap.service.AbstractServiceImpl;
 import ro.teamnet.solutions.reportinator.convert.DataSourceConverter;
 import ro.teamnet.solutions.reportinator.convert.jasper.BeanCollectionJasperDataSourceConverter;
@@ -28,10 +29,10 @@ import java.util.List;
  * @author Bogdan.Stefan
  * @version 1.0 Date: 2/27/2015
  */
-public class ReportsServiceImpl<T extends Serializable, ID extends Serializable>
-        extends AbstractServiceImpl<T, ID> implements ReportsService {
+public abstract class AbstractReportsService<T extends Serializable, ID extends Serializable>
+        extends AbstractServiceImpl<T, ID> implements ReportsService, AbstractService<T, ID> {
 
-    public ReportsServiceImpl(AppRepository<T, ID> repository) {
+    public AbstractReportsService(AppRepository<T, ID> repository) {
         super(repository);
     }
 
@@ -39,8 +40,8 @@ public class ReportsServiceImpl<T extends Serializable, ID extends Serializable>
      * {@inheritDoc}
      */
     @Override
-    public void exportFrom(Report report, ExportType exportType, OutputStream reportOutputStream) {
-        exportFrom(report.getMetadata(), exportType, report.getFilters(), report.getSort(), reportOutputStream);
+    public void exportFrom(Report report, ExportType exportType, OutputStream intoOutputStream) {
+        exportFrom(report.getMetadata(), exportType, report.getFilters(), report.getSort(), intoOutputStream);
     }
 
     /**

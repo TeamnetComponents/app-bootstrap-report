@@ -4,7 +4,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * TODO Documentation
+ * Spring configuration class related to reporting.
  *
  * @author Bogdan.Stefan
  * @version 1.0 Date: 2/27/2015

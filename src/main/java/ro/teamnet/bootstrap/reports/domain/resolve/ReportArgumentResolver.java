@@ -2,6 +2,7 @@ package ro.teamnet.bootstrap.reports.domain.resolve;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -64,7 +65,8 @@ public class ReportArgumentResolver implements HandlerMethodArgumentResolver {
      */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().equals(Report.class);
+        return parameter.getParameterType().equals(Report.class) &&
+                parameter.hasParameterAnnotation(RequestBody.class);
     }
 
     /**

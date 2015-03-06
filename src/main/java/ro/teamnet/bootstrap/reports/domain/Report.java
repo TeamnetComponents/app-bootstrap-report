@@ -22,7 +22,7 @@ public class Report {
     private Sort sort;
 
     /**
-     * Report metadata (such as title, subtitle etc.).
+     * Report metadata (such as title, subtitle, extra parameters, etc.).
      */
     private ReportMetadata metadata;
 

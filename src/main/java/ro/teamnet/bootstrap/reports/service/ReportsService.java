@@ -22,10 +22,10 @@ public interface ReportsService {
      *
      * @param report
      * @param exportType
-     * @param reportOutputStream
+     * @param intoOutputStream An {@code OutputStream} to write the report results into.
      * @return
      */
-    void exportFrom(Report report, ExportType exportType, OutputStream reportOutputStream)  ;
+    void exportFrom(Report report, ExportType exportType, OutputStream intoOutputStream)  ;
 
     /**
      * TODO Doc
@@ -34,17 +34,8 @@ public interface ReportsService {
      * @param exportType
      * @param filters
      * @param sortOptions
-     * @param intoOutputStream
+     * @param intoOutputStream An {@code OutputStream} to write the report results into.
      * @return
      */
     void exportFrom(ReportMetadata metadata, ExportType exportType, Filters filters, Sort sortOptions, OutputStream intoOutputStream);
-
-//    /**
-//     * A method, to be implemented by concrete implementations of this class, which returns the corresponding
-//     * {@link org.springframework.stereotype.Repository @Repository} implementation, for current
-//     * {@link org.springframework.stereotype.Service @Service} implementation.
-//     *
-//     * @return The specific repository instance this service uses for its domain entity management operations.
-//     */
-//    AppRepository<T, ID> getRepository();
 }
