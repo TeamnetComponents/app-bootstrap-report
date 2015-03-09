@@ -7,8 +7,10 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+import ro.teamnet.bootstrap.reports.domain.Report;
 import ro.teamnet.bootstrap.reports.domain.ReportMetadata;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,9 +23,9 @@ import java.util.Map;
  */
 public class ReportMetadataArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private static final String TITLE_REQUEST_PARAMETER_NAME = "reportTitle";
-    private static final String FIELD_COLUMN_REQUEST_PARAMETER_NAME = "reportFieldsColumnMeta";
-    private static final String EXTRA_PARAMS_REQUEST_PARAMETER_NAME = "reportExtraParams";
+    public static final String TITLE_REQUEST_PARAMETER_NAME = "reportTitle";
+    public static final String FIELD_COLUMN_REQUEST_PARAMETER_NAME = "reportFieldsColumnMeta";
+    public static final String EXTRA_PARAMS_REQUEST_PARAMETER_NAME = "reportExtraParams";
 
     /**
      * Method to test if a given {@link org.springframework.core.MethodParameter} can be resolved into an
@@ -34,8 +36,7 @@ public class ReportMetadataArgumentResolver implements HandlerMethodArgumentReso
      */
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().equals(ReportMetadata.class) &&
-                parameter.hasParameterAnnotation(RequestBody.class);
+        return parameter.getParameterType().equals(ReportMetadata.class) || parameter.getParameterType().equals(Report.class);
     }
 
     /**
@@ -46,9 +47,12 @@ public class ReportMetadataArgumentResolver implements HandlerMethodArgumentReso
     @Override
     public ReportMetadata resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                           NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String readValue = objectMapper.readValue(request.getInputStream(), String.class);
         // A holder object
         ReportMetadata reportMetadata = new ReportMetadata();
-        ObjectMapper objectMapper = new ObjectMapper();
         // Title
         String reportTitle = webRequest.getParameter(TITLE_REQUEST_PARAMETER_NAME);
         reportMetadata.setTitle(reportTitle);

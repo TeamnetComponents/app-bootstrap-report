@@ -2,6 +2,7 @@ package ro.teamnet.bootstrap.reports.web.rest;
 
 import org.springframework.web.bind.annotation.RestController;
 import ro.teamnet.bootstrap.reports.service.EmployeeService;
+import ro.teamnet.bootstrap.reports.service.ReportsService;
 
 import javax.inject.Inject;
 

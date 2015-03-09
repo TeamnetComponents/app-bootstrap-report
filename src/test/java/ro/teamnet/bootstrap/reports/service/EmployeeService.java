@@ -6,5 +6,5 @@ package ro.teamnet.bootstrap.reports.service;
  * @author Bogdan.Stefan
  * @version 1.0 Date: 3/4/2015
  */
-public interface EmployeeService {
+public interface EmployeeService{
 }

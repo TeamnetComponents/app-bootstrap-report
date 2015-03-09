@@ -57,6 +57,7 @@ public abstract class AbstractReportsService<T extends Serializable, ID extends 
     @Override
     public void exportFrom(ReportMetadata metadata, ExportType exportType, Filters filters, Sort sortOptions, OutputStream intoOutputStream) {
         // Obtain entity collection
+        // TODO If filters or sort == null, call .findAll() ???
         List<T> entityCollection = super.getRepository().findAll(filters, sortOptions);
         // A converter
         DataSourceConverter<Collection<T>, JRDataSource> dataSourceConverter =
