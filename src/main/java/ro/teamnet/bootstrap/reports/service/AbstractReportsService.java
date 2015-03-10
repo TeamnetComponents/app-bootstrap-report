@@ -7,6 +7,7 @@ import ro.teamnet.bootstrap.extend.AppRepository;
 import ro.teamnet.bootstrap.extend.Filters;
 import ro.teamnet.bootstrap.reports.domain.Report;
 import ro.teamnet.bootstrap.reports.domain.ReportMetadata;
+import ro.teamnet.bootstrap.reports.web.rest.dto.ReportDto;
 import ro.teamnet.bootstrap.service.AbstractService;
 import ro.teamnet.bootstrap.service.AbstractServiceImpl;
 import ro.teamnet.solutions.reportinator.convert.DataSourceConverter;
@@ -27,7 +28,7 @@ import java.util.List;
  * for report generation for the managed entity types.
  *
  * @author Bogdan.Stefan
- * @version 1.0 Date: 2/27/2015
+ * @version 1.0 Date: 2015-02-27
  */
 public abstract class AbstractReportsService<T extends Serializable, ID extends Serializable>
         extends AbstractServiceImpl<T, ID> implements ReportsService, AbstractService<T, ID> {
@@ -46,9 +47,16 @@ public abstract class AbstractReportsService<T extends Serializable, ID extends 
     /**
      * {@inheritDoc}
      */
+    public void exportFrom(ReportDto reportDto, ExportType exportType, OutputStream intoOutputStream) {
+        this.exportFrom(reportDto.toEntity(), exportType, intoOutputStream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void exportFrom(Report report, ExportType exportType, OutputStream intoOutputStream) {
-        exportFrom(report.getMetadata(), exportType, report.getFilters(), report.getSort(), intoOutputStream);
+        this.exportFrom(report.getMetadata(), exportType, report.getFilters(), report.getSort(), intoOutputStream);
     }
 
     /**
@@ -57,9 +65,10 @@ public abstract class AbstractReportsService<T extends Serializable, ID extends 
     @Override
     public void exportFrom(ReportMetadata metadata, ExportType exportType, Filters filters, Sort sortOptions, OutputStream intoOutputStream) {
         // Obtain entity collection
-        // TODO If filters or sort == null, call .findAll() ???
-        List<T> entityCollection = super.getRepository().findAll(filters, sortOptions);
-        // A converter
+        List<T> entityCollection = (filters == null || sortOptions == null) ?
+                super.getRepository().findAll() :
+                super.getRepository().findAll(filters, sortOptions);
+        // A data source converter
         DataSourceConverter<Collection<T>, JRDataSource> dataSourceConverter =
                 new BeanCollectionJasperDataSourceConverter<T>(metadata.getFieldMetadata());
         // Obtain data source from converter

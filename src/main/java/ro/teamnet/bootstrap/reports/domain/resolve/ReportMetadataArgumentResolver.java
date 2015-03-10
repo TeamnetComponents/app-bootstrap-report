@@ -2,7 +2,6 @@ package ro.teamnet.bootstrap.reports.domain.resolve;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.MethodParameter;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -10,7 +9,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import ro.teamnet.bootstrap.reports.domain.Report;
 import ro.teamnet.bootstrap.reports.domain.ReportMetadata;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,10 +45,7 @@ public class ReportMetadataArgumentResolver implements HandlerMethodArgumentReso
     @Override
     public ReportMetadata resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                           NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-
         ObjectMapper objectMapper = new ObjectMapper();
-        String readValue = objectMapper.readValue(request.getInputStream(), String.class);
         // A holder object
         ReportMetadata reportMetadata = new ReportMetadata();
         // Title

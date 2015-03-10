@@ -2,19 +2,14 @@ package ro.teamnet.bootstrap.reports.domain.resolve;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.MethodParameter;
-import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import ro.teamnet.bootstrap.extend.AppFilterHandlerMethodArgumentResolver;
-import ro.teamnet.bootstrap.extend.AppSortHandlerMethodArgumentResolver;
-import ro.teamnet.bootstrap.extend.Filters;
 import ro.teamnet.bootstrap.reports.domain.Report;
-import ro.teamnet.bootstrap.reports.domain.ReportMetadata;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * A handler to resolve {@link org.springframework.core.MethodParameter}s related to
@@ -26,37 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 public class ReportArgumentResolver implements HandlerMethodArgumentResolver {
 
     /**
-     *  A resolver for {@link ro.teamnet.bootstrap.reports.domain.ReportMetadata}.
-     */
-    private final ReportMetadataArgumentResolver metadataResolver;
-
-    /**
-     * A resolver for {@link ro.teamnet.bootstrap.extend.Filters}.
-     */
-    private final AppFilterHandlerMethodArgumentResolver filtersResolver;
-
-    /**
-     * A resolver for {@link org.springframework.data.domain.Sort}.
-     */
-    private final AppSortHandlerMethodArgumentResolver sortResolver;
-
-    /**
-     * Sole constructor. Constructors a <em>resolver</em> which accepts
-     * {@link org.springframework.web.method.support.HandlerMethodArgumentResolver} implementations
-     * each of which can in turn resolve {@link ro.teamnet.bootstrap.reports.domain.ReportMetadata}, {@link ro.teamnet.bootstrap.extend.Filters}
+     * Sole constructor. Constructors a <em>resolver</em> which can resolve
+     * {@link ro.teamnet.bootstrap.reports.domain.ReportMetadata}, {@link ro.teamnet.bootstrap.extend.Filters}
      * and {@link org.springframework.data.domain.Sort} in order to package them all under a
      * {@link ro.teamnet.bootstrap.reports.domain.Report}.
-     *
-     * @param metadataResolver A resolver for {@code ReportMetadata}.
-     * @param filtersResolver  A resolver for {@code Filters}.
-     * @param sortResolver     A resolver for {@code Sort}.
      */
-    public ReportArgumentResolver(ReportMetadataArgumentResolver metadataResolver,
-                                  AppFilterHandlerMethodArgumentResolver filtersResolver,
-                                  AppSortHandlerMethodArgumentResolver sortResolver) {
-        this.metadataResolver = metadataResolver;
-        this.filtersResolver = filtersResolver;
-        this.sortResolver = sortResolver;
+    public ReportArgumentResolver() {
     }
 
     /**
@@ -80,31 +50,16 @@ public class ReportArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public Report resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                      NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        Report report = new Report();
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-
+        Report report = null;
         ObjectMapper objectMapper = new ObjectMapper();
-        report = objectMapper.readValue(request.getInputStream(), Report.class);
+        try {
+            report = objectMapper.readValue(request.getInputStream(), Report.class);
+        } catch (IOException e) {
+            // FUTURE Log this exception
+            return null;
+        }
 
-//        if (this.metadataResolver.supportsParameter(parameter)) {
-//            ReportMetadata resolvedMetadata =
-//                    ReportMetadata.class.cast(this.metadataResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory));
-//            report.setMetadata(resolvedMetadata);
-//        }
-//        if (this.filtersResolver.supportsParameter(parameter)) {
-//            Filters resolvedFilters =
-//                    Filters.class.cast(this.filtersResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory));
-//            report.setFilters(resolvedFilters);
-//        }
-//        if (this.sortResolver.supportsParameter(parameter)) {
-//            Sort resolvedSort = Sort.class.cast(this.sortResolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory));
-//            report.setSort(resolvedSort);
-//        }
-//        // Something went wrong ?
-//        if (report.getMetadata() == null || report.getFilters() == null || report.getSort() == null) {
-//            return null;
-//        }
-//
         return report;
     }
 }
