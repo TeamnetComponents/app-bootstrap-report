@@ -39,7 +39,7 @@ public class ReportController {
     }
 
     @RequestMapping(value = "/pdf", method = RequestMethod.POST)
-    public void exportToPdf(Report report, HttpServletResponse response) {
+    public void exportToPdf(@RequestBody Report report, HttpServletResponse response) {
 
 //        response.reset();
         response.setContentType("application/pdf");
@@ -56,16 +56,14 @@ public class ReportController {
                 e1.printStackTrace();
             }
         }
-
-
     }
 
     @RequestMapping(value = "/xls", method = RequestMethod.POST)
-    public void exportToXls(Report report, HttpServletResponse response) {
+    public void exportToXls(@RequestBody Report report, HttpServletResponse response) {
 
         response.reset();
         response.setContentType("application/vnd.ms-xls");
-        response.setHeader("Content-Dosposition", String.format("attachment; filename\"Report%s.xls\"",
+        response.setHeader("Content-Disposition", String.format("attachment; filename\"Report%s.xls\"",
                 new SimpleDateFormat("dd-MM-yyyy").format(new Date())));
 
         try {
@@ -73,7 +71,7 @@ public class ReportController {
             response.getOutputStream().close();
         } catch (IOException e) {
             try {
-                response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An error has occured while exporting the xls file");
+                response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An error has occurred while exporting the xls file");
             } catch (IOException e1) {
                 e1.printStackTrace();
             }

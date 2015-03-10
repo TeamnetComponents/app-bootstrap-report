@@ -31,6 +31,19 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 public class ReportControllerTest {
 
+    private String requestBodyJson = "{\n" +
+            "\t\"metadata\" : {\n" +
+            "\t\t\"title\" : \"Report title\",\n" +
+            "\t\t\"fieldsAndTableColumnMetadata\" : { \n" +
+            "\t\t\t\"firstName\" : \"Prenume\",\n" +
+            "\t\t\t\"lastName\" : \"Nume\"\n" +
+            "\t\t},\n" +
+            "\t\t\"extraParametersMap\" : {\n" +
+            "\t\t\t\"ReportinatorReportSubTitle\" : \"Subtitlu_Demo\"\n" +
+            "\t\t}\n" +
+            "\t}" +
+            "}";
+
     @Test
     public void testExportToPdf() throws Exception {
         List<Employee> employees = createEmployees();
@@ -40,53 +53,23 @@ public class ReportControllerTest {
         when(employeeRepository.findAll(filters, sort)).thenReturn(employees);
         ReportsService employeeService = new EmployeeServiceImpl(employeeRepository);
         ReportController reportController = new ReportController(employeeService);
-        MockMvc mockMvc = standaloneSetup(reportController).setCustomArgumentResolvers(
-//                new ReportMetadataArgumentResolver(),
-//                new AppFilterHandlerMethodArgumentResolver(),
-//                new AppSortHandlerMethodArgumentResolver(),
-                new ReportArgumentResolver(
-                        new ReportMetadataArgumentResolver(),
-                        new AppFilterHandlerMethodArgumentResolver(),
-                        new AppSortHandlerMethodArgumentResolver())).build();
-
-//        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/reports/pdf");
-//        request.setContentType("application/json");
-//        request/.
-//        MvcResult result = mockMvc.perform(post("/reports/pdf")).andReturn();
-
-        String requestBodyJson = "{\n" +
-                "\t\"metadata\" : {\n" +
-                "\t\t\"title\" : \"Report title\",\n" +
-                "\t\t\"fieldsAndTableColumnMetadata\" : { \n" +
-                "\t\t\t\"firstName\" : \"Prenume\",\n" +
-                "\t\t\t\"lastName\" : \"Nume\"\n" +
-                "\t\t},\n" +
-                "\t\t\"extraParametersMap\" : {\n" +
-                "\t\t\t\"ReportinatorReportSubTitle\" : \"Subtitlu_Demo\"\n" +
-                "\t\t}\n" +
-                "\t}" +
-                "}";
+        MockMvc mockMvc = standaloneSetup(reportController).build();
 
         MvcResult result = mockMvc.perform(
                 post("/reports/pdf")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("reportTitle" , "titlu Raport Demo")
-                        .content(requestBodyJson)
-                /*.param("sort", "\"id\" : \"asc\"")*/)
-                .andDo(print())
+ //                       .param("reportTitle" , "titlu Raport Demo")
+                        .content(requestBodyJson))
+                //.andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
 
-        //String content = result.getResponse().getContentAsString();
         HttpServletResponse response = result.getResponse();
-        //System.out.println(response.getContentType());
+
+        FileOutputStream file = new FileOutputStream("testFile.pdf");
+        file.write(result.getResponse().getContentAsByteArray());
+
         assertTrue(response.getContentType().equals("application/pdf"));
-
-        FileOutputStream fileOutputStream = new FileOutputStream("testFile.pdf");
-
-
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(response.getOutputStream());
-
 
     }
 
@@ -131,10 +114,11 @@ public class ReportControllerTest {
 
         assertTrue(response.getContentType().equals("application/pdf"));
 
-        FileOutputStream fileOutputStream = new FileOutputStream("testFile.pdf");
-
-
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(response.getOutputStream());
+        String content = result.getResponse().getContentAsString();
+        System.out.println(response.getContentType());
+        //System.out.println(content);
+        FileOutputStream file = new FileOutputStream("testFile.pdf");
+        file.write(content.getBytes());
 
 
     }
@@ -148,11 +132,13 @@ public class ReportControllerTest {
         when(employeeRepository.findAll(filters, sort)).thenReturn(employees);
         ReportsService employeeService = new EmployeeServiceImpl(employeeRepository);
         ReportController reportController = new ReportController(employeeService);
-        MockMvc mockMvc = standaloneSetup(reportController).setCustomArgumentResolvers(
-                new ReportArgumentResolver(
-                        new ReportMetadataArgumentResolver(),
-                        new AppFilterHandlerMethodArgumentResolver(),
-                        new AppSortHandlerMethodArgumentResolver())).build();
+        MockMvc mockMvc = standaloneSetup(reportController)
+//                .setCustomArgumentResolvers(
+//                    new ReportArgumentResolver(
+//                            new ReportMetadataArgumentResolver(),
+//                            new AppFilterHandlerMethodArgumentResolver(),
+//                            new AppSortHandlerMethodArgumentResolver()))
+                .build();
 
         String requestBodyJson = "{\n" +
                 "\t\"metadata\" : {\n" +
