@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import ro.teamnet.bootstrap.reports.domain.Report;
+import ro.teamnet.bootstrap.reports.exception.ReportsException;
 import ro.teamnet.bootstrap.reports.service.ReportsService;
 import ro.teamnet.bootstrap.reports.web.rest.dto.ReportDto;
 import ro.teamnet.solutions.reportinator.export.jasper.type.ExportType;
@@ -52,7 +53,7 @@ public class ReportsController {
             try {
                 response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An error has occurred while exporting the pdf file");
             } catch (IOException | IllegalStateException e1) {
-                throw new RuntimeException(e.getMessage(), e1);
+                throw new ReportsException("An error has occurred while exporting the pdf file", e1.getCause());
             }
         }
     }
@@ -62,7 +63,7 @@ public class ReportsController {
 
         response.reset();
         response.setContentType("application/vnd.ms-xls");
-        response.setHeader("Content-Dosposition", String.format("attachment; filename\"Report-%s.xls\"",
+        response.setHeader("Content-Disposition", String.format("attachment; filename\"Report-%s.xls\"",
                 new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
         try {
             reportsService.exportFrom(report, ExportType.XLS, response.getOutputStream());
@@ -71,7 +72,7 @@ public class ReportsController {
             try {
                 response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An error has occurred while exporting the xls file");
             } catch (IOException | IllegalStateException e1) {
-                throw new RuntimeException(e.getMessage(), e1);
+                throw new ReportsException("An error has occurred while exporting the xls file", e1.getCause());
             }
         }
     }

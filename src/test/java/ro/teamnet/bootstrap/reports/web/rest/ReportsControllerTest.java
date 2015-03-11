@@ -12,6 +12,8 @@ import ro.teamnet.bootstrap.reports.repository.EmployeeRepository;
 import ro.teamnet.bootstrap.reports.service.EmployeeServiceImpl;
 import ro.teamnet.bootstrap.reports.service.ReportsService;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 public class ReportsControllerTest {
+
+    private static final String REPORT_REQUEST_BODY_JSON_ORIGINAL = "{\n" +
+            "\t\"metadata\" : {\n" +
+            "\t\t\"title\" : \"Report title\",\n" +
+            "\t\t\"fieldsAndTableColumnMetadata\" : { \n" +
+            "\t\t\t\"firstName\" : \"Prenume\",\n" +
+            "\t\t\t\"lastName\" : \"Nume\"\n" +
+            "\t\t},\n" +
+            "\t\t\"extraParametersMap\" : {\n" +
+            "\t\t\t\"ReportinatorReportSubTitle\" : \"Subtitlu_Demo\"\n" +
+            "\t\t}\n" +
+            "\t}" +
+            "}";
 
     private static final String REPORT_REQUEST_BODY_JSON = "{\n" +
             "\t\"metadata\" : {\n" +
@@ -80,6 +95,8 @@ public class ReportsControllerTest {
             "\t}" +
             "}";
 
+
+
     @Test
     public void testExportToPdf() throws Exception {
         List<Employee> employees = createEmployees();
@@ -97,7 +114,7 @@ public class ReportsControllerTest {
         MvcResult result = mockMvc.perform(
                 post("/reports/pdf")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(REPORT_REQUEST_BODY_JSON))
+                        .content(REPORT_REQUEST_BODY_JSON_ORIGINAL))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -105,6 +122,33 @@ public class ReportsControllerTest {
                 result.getResponse().getStatus() == HttpStatus.OK.value());
         assertTrue("Wrong value for 'Content-Type' attribute.",
                 result.getResponse().getContentType().equals("application/pdf"));
+        assertNotNull(result.getResponse().getContentAsByteArray());
+    }
+
+    @Test
+    public void testExportToXls() throws Exception {
+        List<Employee> employees = createEmployees();
+        EmployeeRepository employeeRepository = mock(EmployeeRepository.class);
+        Sort sort = null;
+        Filters filters = null;
+        when(employeeRepository.findAll(filters, sort)).thenReturn(employees);
+        when(employeeRepository.findAll()).thenReturn(employees);
+        ReportsService employeeService = new EmployeeServiceImpl(employeeRepository);
+        ReportsController reportsController = new ReportsController(employeeService);
+        MockMvc mockMvc = standaloneSetup(reportsController).build();
+
+        MvcResult result = mockMvc.perform(
+                post("/reports/xls")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(REPORT_REQUEST_BODY_JSON_ORIGINAL))
+                //.andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertTrue("Got wrong HTTP Status in response.",
+                result.getResponse().getStatus() == HttpStatus.OK.value());
+        assertTrue("Wrong value for 'Content-Type' attribute.",
+                result.getResponse().getContentType().equals("application/vnd.ms-xls"));
         assertNotNull(result.getResponse().getContentAsByteArray());
     }
 
