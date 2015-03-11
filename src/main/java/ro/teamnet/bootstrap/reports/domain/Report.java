@@ -9,7 +9,7 @@ import ro.teamnet.bootstrap.extend.Filters;
  * @author Bogdan.Stefan
  * @version 1.0 Date: 3/4/2015
  */
-public class Report {
+public class Report implements Reportable {
 
     /**
      * Filters, to be used to create the report.
@@ -26,14 +26,17 @@ public class Report {
      */
     private ReportMetadata metadata;
 
+    @Override
     public ReportMetadata getMetadata() {
         return metadata;
     }
 
+    @Override
     public Filters getFilters() {
         return filters;
     }
 
+    @Override
     public Sort getSort() {
         return sort;
     }

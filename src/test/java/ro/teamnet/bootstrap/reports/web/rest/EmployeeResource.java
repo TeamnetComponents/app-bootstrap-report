@@ -1,20 +1,23 @@
 package ro.teamnet.bootstrap.reports.web.rest;
 
 import org.springframework.web.bind.annotation.RestController;
-import ro.teamnet.bootstrap.reports.service.EmployeeService;
 import ro.teamnet.bootstrap.reports.service.ReportsService;
 
 import javax.inject.Inject;
 
 /**
- * TODO Documentation
+ * A sample class, to be used in tests.
  *
  * @author Bogdan.Stefan
- * @version 1.0 Date: 3/4/2015
+ * @version 1.0 Date: 2015-03-04
  */
 @RestController
-public class EmployeeResource {
+public class EmployeeResource extends AbstractReportsResource {
+
+    private ReportsService employeeService;
 
     @Inject
-    private EmployeeService employeeService;
+    public EmployeeResource(ReportsService employeeService) {
+        super(employeeService);
+    }
 }
