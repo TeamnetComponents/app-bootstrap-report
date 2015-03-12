@@ -58,11 +58,11 @@ public abstract class AbstractReportsService<T extends Serializable, ID extends 
      */
     @Override
     public void exportFrom(ReportMetadata metadata, ExportType exportType, Filters filters, Sort sortOptions, OutputStream intoOutputStream) throws ReportsException {
-        // Obtain entity collection
-        List<T> entityCollection = (filters == null || sortOptions == null) ?
-                super.getRepository().findAll() :
-                super.getRepository().findAll(filters, sortOptions);
         try {
+            // Obtain entity collection
+            List<T> entityCollection = (filters == null || sortOptions == null) ?
+                    super.getRepository().findAll() :
+                    super.getRepository().findAll(filters, sortOptions);
             // A data source converter
             DataSourceConverter<Collection<T>, JRDataSource> dataSourceConverter =
                     new BeanCollectionJasperDataSourceConverter<T>(metadata.getFieldMetadata());
@@ -70,10 +70,10 @@ public abstract class AbstractReportsService<T extends Serializable, ID extends 
             JRDataSource dataSource = dataSourceConverter.convert(entityCollection);
             // Create a generator using metadata and above data source
             ReportGenerator<JasperPrint> reportGenerator = JasperReportGenerator.builder()
-                    .withTitle(metadata.getTitle())
+                    .withTitle(metadata.getTitle()) // FUTURE This is an optional field. How to call builder method when present?
                     .withDatasource(dataSource)
                     .withTableColumnsMetadata(metadata.getFieldsAndTableColumnMetadata())
-                    .withParameters(metadata.getExtraParametersMap())
+                    .withParameters(metadata.getExtraParametersMap()) // FUTURE This is an optional field. How to call builder method when present?
                     .build();
             // Export
             JasperReportExporter.export(reportGenerator, intoOutputStream, exportType);
