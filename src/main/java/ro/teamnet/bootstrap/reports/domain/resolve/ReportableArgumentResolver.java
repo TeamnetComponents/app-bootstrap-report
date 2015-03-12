@@ -41,7 +41,7 @@ public class ReportableArgumentResolver implements HandlerMethodArgumentResolver
     /**
      * Minimum JSON content data size, in bytes.
      */
-    private static final int JSON_BODY_CONTENT_SIZE = 32768; // Allocate 32KB for JSON body content - this is waaay more than enough
+    private static final int JSON_BODY_CONTENT_SIZE = 32768; // Allocate 32KB for a request's JSON body content - this is waaaay more than enough
 
     /**
      * Expected charset encoding for JSON data.
@@ -49,9 +49,14 @@ public class ReportableArgumentResolver implements HandlerMethodArgumentResolver
     private static final String JSON_BODY_CONTENT_EXPECTED_CHARSET = "UTF-8";
 
     private static final String JSON_REPORT_METADATA_DEFAULT_LOOKUP_KEY = "metadata";
+
     private static final String JSON_REPORT_FILTERS_DEFAULT_LOOKUP_KEY = "filters";
+
     private static final String JSON_REPORT_SORT_DEFAULT_LOOKUP_KEY = "sort";
     private static final String JSON_REPORT_SORT_ORDERS_DEFAULT_LOOKUP_KEY = "orders";
+    private static final String JSON_REPORT_SORT_ORDER_DIRECTION_DEFAULT_LOOKUP_KEY = "direction";
+    private static final String JSON_REPORT_SORT_ORDER_PROPERTY_DEFAULT_LOOKUP_KEY = "property";
+    private static final String JSON_REPORT_SORT_ORDER_NULL_HANDLING_DEFAULT_LOOKUP_KEY = "nullHandling";
 
     /**
      * Sole constructor. Constructors a <em>resolver</em> which can resolve
@@ -75,8 +80,10 @@ public class ReportableArgumentResolver implements HandlerMethodArgumentResolver
     }
 
     /**
-     * Handles requests for {@link ro.teamnet.bootstrap.reports.domain.Report} (equivalent of a report's
-     * domain entity).
+     * Handles requests for {@link ro.teamnet.bootstrap.reports.domain.Reportable} (equivalent of a report's
+     * domain entity). A {@code Reportable} must have {@link ro.teamnet.bootstrap.reports.domain.ReportMetadata} and,
+     * optionally, filtering and sorting options.
+     *
      * <p/>
      * {@inheritDoc}
      */
@@ -97,7 +104,7 @@ public class ReportableArgumentResolver implements HandlerMethodArgumentResolver
             report.setMetadata(metadata);
         } catch (JsonParseException | JsonMappingException e) {
             // FUTURE Log this exception
-            return null;
+            return null; // Metadata is mandatory, therefore we return null
         }
         try { // Filters
             String filtersAsJsonString = jsonObject.getString(JSON_REPORT_FILTERS_DEFAULT_LOOKUP_KEY);
@@ -115,18 +122,22 @@ public class ReportableArgumentResolver implements HandlerMethodArgumentResolver
                 JSONObject sortOrderJsonObject = sortOrdersArray.getJSONObject(i);
                 Sort.Order sortOrder = new Sort.Order(
                         // Direction
-                        sortOrderJsonObject.getString("direction") != null ? Sort.Direction.valueOf(sortOrderJsonObject.getString("direction").toUpperCase()) : null,
+                        sortOrderJsonObject.getString(JSON_REPORT_SORT_ORDER_DIRECTION_DEFAULT_LOOKUP_KEY) != null ?
+                                Sort.Direction.valueOf(sortOrderJsonObject.getString(JSON_REPORT_SORT_ORDER_DIRECTION_DEFAULT_LOOKUP_KEY).toUpperCase()) :
+                                null,
                         // Property
-                        sortOrderJsonObject.getString("property"),
+                        sortOrderJsonObject.getString(JSON_REPORT_SORT_ORDER_PROPERTY_DEFAULT_LOOKUP_KEY),
                         // NullHandling
-                        sortOrderJsonObject.getString("nullHandling") != null ? Sort.NullHandling.valueOf(sortOrderJsonObject.getString("nullHandling")) : null);
+                        sortOrderJsonObject.getString(JSON_REPORT_SORT_ORDER_NULL_HANDLING_DEFAULT_LOOKUP_KEY) != null ?
+                                Sort.NullHandling.valueOf(sortOrderJsonObject.getString(JSON_REPORT_SORT_ORDER_NULL_HANDLING_DEFAULT_LOOKUP_KEY)) :
+                                null);
                 sortOrders.add(sortOrder);
             }
             // Create
             Sort sortOptions = new Sort(sortOrders);
             report.setSort(sortOptions);
         } catch (JSONException e) {
-            // FUTURE Just log this (sort options JSON data data might not be present)
+            // FUTURE Just log this
             // We "swallow" these since Sort JSON data might not be present
         }
 

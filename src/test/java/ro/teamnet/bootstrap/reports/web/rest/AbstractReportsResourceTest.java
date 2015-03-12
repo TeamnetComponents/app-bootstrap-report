@@ -80,6 +80,29 @@ public class AbstractReportsResourceTest {
     private EmployeeResource employeeResource;
     private MockMvc mockMvc;
 
+    private static List<Employee> createEmployeesDataSource() {
+        List<Employee> employees = new ArrayList<Employee>();
+        employees.add(new Employee("Sad", "Panda"));
+        employees.add(new Employee("Gigi", "Petrescu"));
+
+        return employees;
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        List<Employee> employeesList = createEmployeesDataSource();
+        EmployeeRepository mockEmployeeRepository = mock(EmployeeRepository.class);
+        when(mockEmployeeRepository.findAll(any(Filters.class), any(Sort.class))).thenReturn(employeesList);
+        when(mockEmployeeRepository.findAll()).thenReturn(employeesList); // We're interested only in the metadata
+        when(mockEmployeeRepository.findAll((Filters) isNull(), (Sort) isNull())).thenReturn(employeesList);  // Explicitly call method with this signature
+        ReportsService employeeService = new EmployeeServiceImpl(mockEmployeeRepository);
+        employeeResource = new EmployeeResource(employeeService);
+        mockMvc = standaloneSetup(employeeResource)
+                .setCustomArgumentResolvers(
+                        new ReportableArgumentResolver())
+                .build();
+    }
+
     @Test
     public void shouldExportAPdfWhenReportJsonContainsNoFiltersAndSort() throws Exception {
 
@@ -99,21 +122,6 @@ public class AbstractReportsResourceTest {
         assertTrue("Wrong value for 'Content-Type' attribute.",
                 result.getResponse().getContentType().equals("application/pdf"));
         assertNotNull(result.getResponse().getContentAsByteArray());
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        List<Employee> employees = createEmployeesDataSource();
-        EmployeeRepository mockEmployeeRepository = mock(EmployeeRepository.class);
-        when(mockEmployeeRepository.findAll(any(Filters.class), any(Sort.class))).thenReturn(employees);
-        when(mockEmployeeRepository.findAll()).thenReturn(employees); // We're interested only in the metadata
-        when(mockEmployeeRepository.findAll((Filters) isNull(), (Sort) isNull())).thenReturn(employees);  // Explicitly call method with this signature
-        ReportsService employeeService = new EmployeeServiceImpl(mockEmployeeRepository);
-        employeeResource = new EmployeeResource(employeeService);
-        mockMvc = standaloneSetup(employeeResource)
-                .setCustomArgumentResolvers(
-                        new ReportableArgumentResolver())
-                .build();
     }
 
     @Test
@@ -178,13 +186,5 @@ public class AbstractReportsResourceTest {
         assertTrue("Wrong value for 'Content-Type' attribute.",
                 result.getResponse().getContentType().equals("application/vnd.ms-xls"));
         assertNotNull(result.getResponse().getContentAsByteArray());
-    }
-
-    private static List<Employee> createEmployeesDataSource() {
-        List<Employee> employees = new ArrayList<>();
-        employees.add(new Employee("Sad", "Panda"));
-        employees.add(new Employee("Gigi", "Petrescu"));
-
-        return employees;
     }
 }
