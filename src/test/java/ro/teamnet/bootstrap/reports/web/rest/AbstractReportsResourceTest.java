@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.util.NestedServletException;
 import ro.teamnet.bootstrap.extend.Filters;
 import ro.teamnet.bootstrap.reports.config.ReportsTestConstants;
 import ro.teamnet.bootstrap.reports.domain.Employee;
@@ -78,6 +79,7 @@ public class AbstractReportsResourceTest {
         assertNotNull(result.getResponse().getContentAsByteArray());
     }
 
+
     @Test
     public void shouldExportAPdfWhenReportJsonContainsFiltersAndSort() throws Exception {
         MvcResult result = mockMvc.perform(
@@ -94,6 +96,44 @@ public class AbstractReportsResourceTest {
         assertNotNull(result.getResponse().getContentAsByteArray());
     }
 
+
+    @Test
+    public void shouldPassIfContentIsNotSetPDF() throws Exception {
+
+        MockMvc mockMvc = standaloneSetup(employeeResource)
+                .setCustomArgumentResolvers(
+                        new ReportableArgumentResolver())
+                .build();
+        MvcResult result = mockMvc.perform(
+                post("/reports/pdf")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+        assertTrue("Got wrong HTTP Status in response.",
+                result.getResponse().getStatus() == HttpStatus.BAD_REQUEST.value());
+
+    }
+
+    @Test
+    public void shouldPassIfContentIsInvalidPDF() throws Exception {
+
+        MockMvc mockMvc = standaloneSetup(employeeResource)
+                .setCustomArgumentResolvers(
+                        new ReportableArgumentResolver())
+                .build();
+        MvcResult result = mockMvc.perform(
+                post("/reports/pdf")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ReportsTestConstants.REPORT_REQUEST_MALFORMED_BODY_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+        assertTrue("Got wrong HTTP Status in response.",
+                result.getResponse().getStatus() == HttpStatus.BAD_REQUEST.value());
+
+    }
+
     @Test
     public void testExportToXlsWhenReportJsonContainsNoFiltersAndSort() throws Exception {
         MvcResult result = mockMvc.perform(
@@ -108,6 +148,59 @@ public class AbstractReportsResourceTest {
         assertTrue("Wrong value for 'Content-Type' attribute.",
                 result.getResponse().getContentType().equals("application/vnd.ms-xls"));
         assertNotNull(result.getResponse().getContentAsByteArray());
+    }
+
+    @Test
+    public void shouldExportAXlsWhenReportJsonContainsFiltersAndSort() throws Exception {
+        MvcResult result = mockMvc.perform(
+                post("/reports/xls")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ReportsTestConstants.REPORT_REQUEST_BODY_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        assertTrue("Got wrong HTTP Status in response.",
+                result.getResponse().getStatus() == HttpStatus.OK.value());
+        assertTrue("Wrong value for 'Content-Type' attribute.",
+                result.getResponse().getContentType().equals("application/vnd.ms-xls"));
+        assertNotNull(result.getResponse().getContentAsByteArray());
+    }
+
+    @Test
+    public void shouldPassIfContentIsNotSetXLS() throws Exception {
+
+        MockMvc mockMvc = standaloneSetup(employeeResource)
+                .setCustomArgumentResolvers(
+                        new ReportableArgumentResolver())
+                .build();
+        MvcResult result = mockMvc.perform(
+                post("/reports/xls")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+        assertTrue("Got wrong HTTP Status in response.",
+                result.getResponse().getStatus() == HttpStatus.BAD_REQUEST.value());
+
+    }
+
+    @Test
+    public void shouldPassIfContentIsInvalidXLS() throws Exception {
+
+        MockMvc mockMvc = standaloneSetup(employeeResource)
+                .setCustomArgumentResolvers(
+                        new ReportableArgumentResolver())
+                .build();
+        MvcResult result = mockMvc.perform(
+                post("/reports/xls")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ReportsTestConstants.REPORT_REQUEST_MALFORMED_BODY_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+        assertTrue("Got wrong HTTP Status in response.",
+                result.getResponse().getStatus() == HttpStatus.BAD_REQUEST.value());
+
     }
 
     @Test
