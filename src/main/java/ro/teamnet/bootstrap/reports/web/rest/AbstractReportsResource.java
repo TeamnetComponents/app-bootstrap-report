@@ -36,39 +36,47 @@ public abstract class AbstractReportsResource {
     }
 
     @RequestMapping(value = "/reports/pdf", method = RequestMethod.POST)
-    public void exportToPdf(Reportable Reportable, HttpServletResponse response) {
-        response.reset();
-        response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", String.format("attachment; filename\"Report-%s.pdf\"",
-                new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
+    public void exportToPdf(Reportable reportable, HttpServletResponse response) {
         try {
-            reportsService.exportFrom(Reportable, ExportType.PDF, response.getOutputStream());
+            if (reportable == null){
+                throw new ReportsException("Invalid or empty report JSON content");
+            }
+            response.reset();
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", String.format("attachment; filename\"Report-%s.pdf\"",
+                    new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
+
+            reportsService.exportFrom(reportable, ExportType.PDF, response.getOutputStream());
             response.getOutputStream().close();
-        } catch (IOException | IllegalStateException e) {
+        } catch (ReportsException | IOException | IllegalStateException e) {
             try {
                 // FUTURE Log this error
-                response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An error has occurred while exporting the pdf file");
+                response.sendError(HttpStatus.BAD_REQUEST.value(), "An error has occurred while exporting the pdf file : " + e.getMessage());
             } catch (IOException | IllegalStateException e1) {
-                throw new ReportsException("A severe error has occurred while exporting the PDF file", e1.getCause());
+                throw new RuntimeException("A severe error has occurred while exporting the PDF file", e1);
             }
         }
     }
 
     @RequestMapping(value = "/reports/xls", method = RequestMethod.POST)
-    public void exportToXls(Reportable Reportable, HttpServletResponse response) {
-        response.reset();
-        response.setContentType("application/vnd.ms-xls");
-        response.setHeader("Content-Disposition", String.format("attachment; filename\"Report-%s.xls\"",
-                new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
+    public void exportToXls(Reportable reportable, HttpServletResponse response) {
         try {
-            reportsService.exportFrom(Reportable, ExportType.XLS, response.getOutputStream());
+            if (reportable == null){
+                throw new ReportsException("Invalid or empty report JSON content");
+            }
+            response.reset();
+            response.setContentType("application/vnd.ms-xls");
+            response.setHeader("Content-Disposition", String.format("attachment; filename\"Report-%s.xls\"",
+                    new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
+
+            reportsService.exportFrom(reportable, ExportType.XLS, response.getOutputStream());
             response.getOutputStream().close();
-        } catch (IOException | IllegalStateException e) {
+        } catch (ReportsException | IOException | IllegalStateException e) {
             try {
                 // FUTURE Log this error
-                response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An error has occurred while exporting the xls file");
+                response.sendError(HttpStatus.BAD_REQUEST.value(), "An error has occurred while exporting the pdf file : " + e.getMessage());
             } catch (IOException | IllegalStateException e1) {
-                throw new ReportsException("A severe error has occurred while exporting the XLS file", e1.getCause());
+                throw new RuntimeException("A severe error has occurred while exporting the XLS file", e1);
             }
         }
     }
