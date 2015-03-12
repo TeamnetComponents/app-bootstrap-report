@@ -4,6 +4,6 @@
  * implementations) for domain specific entities.
  *
  * @author Bogdan.Stefan
- * @version 1.0 Date: 3/4/2015
+ * @version 1.0 Date: 2015-03-04
  */
 package ro.teamnet.bootstrap.reports.domain.resolve;

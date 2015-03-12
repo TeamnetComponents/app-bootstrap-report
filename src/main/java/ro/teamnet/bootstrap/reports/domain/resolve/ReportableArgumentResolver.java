@@ -102,7 +102,7 @@ public class ReportableArgumentResolver implements HandlerMethodArgumentResolver
             String metadataAsJsonString = jsonObject.getString(JSON_REPORT_METADATA_DEFAULT_LOOKUP_KEY);
             ReportMetadata metadata = objectMapper.readValue(metadataAsJsonString, objectMapper.constructType(ReportMetadata.class));
             report.setMetadata(metadata);
-        } catch (JsonParseException | JsonMappingException e) {
+        } catch (JsonParseException | JsonMappingException | JSONException e) {
             // FUTURE Log this exception
             return null; // Metadata is mandatory, therefore we return null
         }

@@ -63,7 +63,7 @@ public class ReportableArgumentResolverTest {
     }
 
     @Test
-    public void shouldReturnAValidReportableInstance() throws Exception {
+    public void shouldReturnValidReportableInstance() throws Exception {
         ReportableArgumentResolver rar = new ReportableArgumentResolver();
         Reportable reportable = rar.resolveArgument(mockMethodParameter, null, mockNativeWebRequest, null);
         assertNotNull("Returned instance should not be null.", reportable);
@@ -73,7 +73,8 @@ public class ReportableArgumentResolverTest {
     }
 
     @Test
-    public void shouldReturnAReportableInstanceHavingOnlyMetadata() throws Exception {
+    public void shouldReturnReportableInstanceHavingOnlyMetadata() throws Exception {
+        // This test requires different input
         InputStream is = new ByteArrayInputStream(ReportsTestConstants.REPORT_REQUEST_BODY_JSON_NO_FILTERS_AND_SORT.getBytes());
         DelegatingServletInputStream dsis = new DelegatingServletInputStream(is);
         when(mockServletRequest.getInputStream()).thenReturn(dsis);
@@ -85,5 +86,18 @@ public class ReportableArgumentResolverTest {
         assertNotNull("Returned instance should have non-null metadata.", reportable.getMetadata());
         assertNull("Returned instance should have null filter information.", reportable.getFilters());
         assertNull("Returned instance should have null sort ordering.", reportable.getSort());
+    }
+
+    @Test
+    public void shouldNotReturnReportableInstanceBecauseOfInvalidJsonMetadata() throws Exception {
+        // This test requires different input
+        InputStream is = new ByteArrayInputStream(ReportsTestConstants.REPORT_REQUEST_MALFORMED_BODY_JSON.getBytes());
+        DelegatingServletInputStream dsis = new DelegatingServletInputStream(is);
+        when(mockServletRequest.getInputStream()).thenReturn(dsis);
+        when(mockNativeWebRequest.getNativeRequest()).thenReturn(mockServletRequest);
+
+        ReportableArgumentResolver rar = new ReportableArgumentResolver();
+        Reportable reportable = rar.resolveArgument(mockMethodParameter, null, mockNativeWebRequest, null);
+        assertNull("Returned instance should be null.", reportable);
     }
 }

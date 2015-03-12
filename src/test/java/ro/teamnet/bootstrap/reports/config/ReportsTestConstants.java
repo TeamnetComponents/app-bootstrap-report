@@ -21,6 +21,19 @@ public class ReportsTestConstants {
             "\t}" +
             "}";
 
+    public static final String REPORT_REQUEST_MALFORMED_BODY_JSON = "{\n" +
+            "\t\"metadataa\" : {\n" +
+            "\t\t\"title\" : \"Report title\",\n" +
+            "\t\t\"fieldsAndTableColumnMetadata\" : {\n" +
+            "\t\t\t\"firstName\" : \"Prenume\",\n" +
+            "\t\t\t\"lastName\" : \"Nume\"\n" +
+            "\t\t},\n" +
+            "\t\t\"extraParametersMap\" : {\n" +
+            "\t\t\t\"ReportinatorReportSubTitle\" : \"Subtitlu_Demo\"\n" +
+            "\t\t}\n" +
+            "\t}" +
+            "}";
+
     public static final String REPORT_REQUEST_BODY_JSON = "{\n" +
                     "\t\"metadata\" : {\n" +
                     "\t\t\"title\" : \"Report title\",\n" +
