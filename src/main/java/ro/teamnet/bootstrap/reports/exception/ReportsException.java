@@ -9,16 +9,8 @@ import ro.teamnet.bootstrap.exception.ApplicationException;
 
 public class ReportsException extends ApplicationException {
 
-    public ReportsException() {
-        super();
-    }
-
     public ReportsException(String message) {
         super(message);
-    }
-
-    public ReportsException(Throwable cause) {
-        super(cause);
     }
 
     public ReportsException(String message, Throwable cause) {
