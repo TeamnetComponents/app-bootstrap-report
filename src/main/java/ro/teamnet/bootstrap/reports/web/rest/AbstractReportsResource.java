@@ -47,7 +47,6 @@ public abstract class AbstractReportsResource {
                     new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
 
             reportsService.exportFrom(reportable, ExportType.PDF, response.getOutputStream());
-            //response.getOutputStream().close();
         } catch (ReportsException | IOException | IllegalStateException e) {
             try {
                 // FUTURE Log this error
@@ -70,7 +69,6 @@ public abstract class AbstractReportsResource {
                     new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
 
             reportsService.exportFrom(reportable, ExportType.XLS, response.getOutputStream());
-            //response.getOutputStream().close();
         } catch (ReportsException | IOException | IllegalStateException e) {
             try {
                 // FUTURE Log this error

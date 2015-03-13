@@ -9,32 +9,38 @@ import ro.teamnet.bootstrap.reports.domain.resolve.ReportableArgumentResolver;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Spring configuration class related to reporting.
  *
  * @author Bogdan.Stefan
- * @version 1.0 Date: 2/27/2015
+ * @version 1.0 Date: 2015-02-27
  */
 @Configuration
 @ComponentScan("ro.teamnet.bootstrap.reports")
 public class ReportsConfiguration {
 
-    @Bean
-    public HandlerMethodArgumentResolver reportableArgumentResolver(){
-        return new ReportableArgumentResolver();
-    }
-
     @Inject
     private RequestMappingHandlerAdapter adapter;
 
-
-    @PostConstruct
-    public void prioritizeCustomArgumentMethodHandlers() {
-        adapter.getCustomArgumentResolvers().add(reportableArgumentResolver());
+    /**
+     * Instantiates a custom argument resolver (as a
+     * {@link org.springframework.web.method.support.HandlerMethodArgumentResolver} implementation, to handle
+     * {@link ro.teamnet.bootstrap.reports.domain.Reportable Reportable} request method parameters.
+     *
+     * @return An instance of {@code ReportableArgumentResolver} as a {@code HandlerMethodArgumentResolver}.
+     * @see ro.teamnet.bootstrap.reports.domain.resolve.ReportableArgumentResolver
+     */
+    @Bean
+    public HandlerMethodArgumentResolver reportableArgumentResolver() {
+        return new ReportableArgumentResolver();
     }
 
-
+    /**
+     * Adds custom argument resolvers to Spring, after this configuration class is loaded.
+     */
+    @PostConstruct
+    public void addCustomArgumentMethodHandlers() {
+        this.adapter.getCustomArgumentResolvers().add(reportableArgumentResolver());
+    }
 }
