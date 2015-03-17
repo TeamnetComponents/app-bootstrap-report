@@ -21,7 +21,7 @@ import javax.inject.Inject;
 public class ReportsConfiguration {
 
     @Inject
-    private RequestMappingHandlerAdapter adapter;
+    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
     /**
      * Instantiates a custom argument resolver (as a
@@ -41,6 +41,6 @@ public class ReportsConfiguration {
      */
     @PostConstruct
     public void addCustomArgumentMethodHandlers() {
-        this.adapter.getCustomArgumentResolvers().add(reportableArgumentResolver());
+        this.requestMappingHandlerAdapter.getCustomArgumentResolvers().add(reportableArgumentResolver());
     }
 }

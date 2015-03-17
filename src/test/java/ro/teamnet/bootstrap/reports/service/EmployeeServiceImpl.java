@@ -13,7 +13,7 @@ import javax.inject.Inject;
  * @version 1.0 Date: 3/4/2015
  */
 @Service
-public class EmployeeServiceImpl extends AbstractReportsService<Employee, Long> implements ReportsService, EmployeeService {
+public class EmployeeServiceImpl extends AbstractReportsService<Employee, Long> implements EmployeeService {
 
     private EmployeeRepository employeeRepository;
 
@@ -23,11 +23,4 @@ public class EmployeeServiceImpl extends AbstractReportsService<Employee, Long> 
         this.employeeRepository = employeeRepository;
 
     }
-
-//    @Override
-//    @SuppressWarnings("unchecked")
-//    public <ID extends Serializable> AppRepository<Employee, ID> getRepository() {
-//        return (AppRepository<Employee, ID>) employeeRepository;
-//    }
-
 }

@@ -1,6 +1,7 @@
 package ro.teamnet.bootstrap.reports.service;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -37,6 +38,7 @@ public class AbstractReportsServiceTest {
         when(mockEmployeeRepository.findAll((Filters) isNull(), (Sort) isNull())).thenReturn(Collections.<Employee>emptyList());
     }
 
+    @Ignore // TODO A valid report ought to be generated even if collection is empty; current test is somewhat broken
     @Test(expected = ReportsException.class)
     public void shouldPassIfRepositoryReturnsEmptyCollection() throws Exception {
         ReportsService employeeReportsService = new EmployeeServiceImpl(mockEmployeeRepository);
@@ -45,7 +47,8 @@ public class AbstractReportsServiceTest {
         Map<String, String> fieldTableColumnsMeta = new HashMap<String, String>();
         fieldTableColumnsMeta.put("col01", "Column one");
         metadata.setFieldsAndTableColumnMetadata(fieldTableColumnsMeta);
-        employeeReportsService.exportFrom(metadata, ExportType.PDF, null, null, new FileOutputStream("test.pdf"));
-
+        Filters filters = null; // Explicitly
+        Sort sort = null; // set to 'null'
+        employeeReportsService.exportFrom(metadata, ExportType.PDF, filters, sort, new FileOutputStream("test.pdf"));
     }
 }

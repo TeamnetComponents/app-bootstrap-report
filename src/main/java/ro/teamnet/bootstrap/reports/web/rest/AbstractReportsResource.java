@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import ro.teamnet.bootstrap.reports.domain.Reportable;
 import ro.teamnet.bootstrap.reports.exception.ReportsException;
 import ro.teamnet.bootstrap.reports.service.ReportsService;
+import ro.teamnet.bootstrap.web.rest.AbstractResource;
 import ro.teamnet.solutions.reportinator.export.jasper.type.ExportType;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -27,18 +29,38 @@ import java.util.Date;
  * @author Bogdan.Stefan
  * @version 1.0 Date: 2015-03-06
  */
-public abstract class AbstractReportsResource {
+public abstract class AbstractReportsResource<T extends Serializable, ID extends Serializable>
+        extends AbstractResource<T, ID> {
 
-    private final ReportsService reportsService;
+    private final ReportsService<T, ID> reportsService;
 
-    public AbstractReportsResource(ReportsService reportsService) {
+    /**
+     * @return The underlying {@link ro.teamnet.bootstrap.reports.service.ReportsService} instance.
+     */
+    public ReportsService<T, ID> getReportsService() {
+        return reportsService;
+    }
+
+    /**
+     * TODO Doc
+     *
+     * @param reportsService
+     */
+    public AbstractReportsResource(ReportsService<T, ID> reportsService) {
+        super(reportsService);
         this.reportsService = reportsService;
     }
 
+    /**
+     * TODO Doc
+     *
+     * @param reportable
+     * @param response
+     */
     @RequestMapping(value = "/reports/pdf", method = RequestMethod.POST)
     public void exportToPdf(Reportable reportable, HttpServletResponse response) {
         try {
-            if (reportable == null){
+            if (reportable == null) {
                 throw new ReportsException("Invalid or empty report JSON content");
             }
             response.reset();
@@ -57,10 +79,16 @@ public abstract class AbstractReportsResource {
         }
     }
 
+    /**
+     * TODO Doc
+     *
+     * @param reportable
+     * @param response
+     */
     @RequestMapping(value = "/reports/xls", method = RequestMethod.POST)
     public void exportToXls(Reportable reportable, HttpServletResponse response) {
         try {
-            if (reportable == null){
+            if (reportable == null) {
                 throw new ReportsException("Invalid or empty report JSON content");
             }
             response.reset();
@@ -72,22 +100,28 @@ public abstract class AbstractReportsResource {
         } catch (ReportsException | IOException | IllegalStateException e) {
             try {
                 // FUTURE Log this error
-                response.sendError(HttpStatus.BAD_REQUEST.value(), "An error has occurred while exporting the pdf file : " + e.getMessage());
+                response.sendError(HttpStatus.BAD_REQUEST.value(), "An error has occurred while exporting the XLS file : " + e.getMessage());
             } catch (IOException | IllegalStateException e1) {
                 throw new RuntimeException("A severe error has occurred while exporting the XLS file", e1);
             }
         }
     }
 
+    /**
+     * TODO Doc
+     *
+     * @param reportable
+     * @return
+     */
     @RequestMapping(value = "/reports/pdf/alternative", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<byte[]> alternativeMethodToExportToPdf(Reportable Reportable) {
+    public ResponseEntity<byte[]> alternativeMethodToExportToPdf(Reportable reportable) {
         //verification here? maybe to return some HttpStatus if there are problems?
 
         //opening the bytearrayoutputstream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
         //calling the service method
-        reportsService.exportFrom(Reportable, ExportType.PDF, byteArrayOutputStream);
+        reportsService.exportFrom(reportable, ExportType.PDF, byteArrayOutputStream);
 
         //setting the headers
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -99,19 +133,25 @@ public abstract class AbstractReportsResource {
         return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), httpHeaders, HttpStatus.OK);
     }
 
+    /**
+     * TODO Doc
+     *
+     * @param reportable
+     * @return
+     */
     @RequestMapping(value = "/reports/xls/alternative", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<byte[]> alternativeMethodToExportToXls(Reportable Reportable) {
+    public ResponseEntity<byte[]> alternativeMethodToExportToXls(Reportable reportable) {
         //verification here? maybe to return some HttpStatus if there are problems?
 
         //opening the bytearrayoutputstream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
         //calling the service method
-        reportsService.exportFrom(Reportable, ExportType.XLS, byteArrayOutputStream);
+        reportsService.exportFrom(reportable, ExportType.XLS, byteArrayOutputStream);
 
         //setting the headers
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Context-Disposition", String.format("attachment; filename=\"Report.%s.xls\"",
+        httpHeaders.set("Context-Disposition", String.format("attachment; filename=\"Report-%s.xls\"",
                 new SimpleDateFormat("yyyyMMdd").format(new Date())));
         httpHeaders.setContentType(MediaType.parseMediaType("application/vnd.ms-xls"));
 

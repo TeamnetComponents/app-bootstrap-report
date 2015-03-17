@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A handler to resolve {@link org.springframework.core.MethodParameter}s related to
- * {@link ro.teamnet.bootstrap.reports.domain.Report}.
+ * A handler to resolve {@code @RequestMapping} annotated methods' {@link org.springframework.core.MethodParameter}s
+ * related to {@link ro.teamnet.bootstrap.reports.domain.Report} interface.
  *
  * @author Bogdan.Stefan
  * @version 1.0 Date: 2015-03-04

@@ -8,7 +8,6 @@ import ro.teamnet.bootstrap.extend.Filters;
 import ro.teamnet.bootstrap.reports.domain.ReportMetadata;
 import ro.teamnet.bootstrap.reports.domain.Reportable;
 import ro.teamnet.bootstrap.reports.exception.ReportsException;
-import ro.teamnet.bootstrap.service.AbstractService;
 import ro.teamnet.bootstrap.service.AbstractServiceImpl;
 import ro.teamnet.solutions.reportinator.convert.DataSourceConverter;
 import ro.teamnet.solutions.reportinator.convert.jasper.BeanCollectionJasperDataSourceConverter;
@@ -32,7 +31,7 @@ import java.util.List;
  * @version 1.0 Date: 2015-02-27
  */
 public abstract class AbstractReportsService<T extends Serializable, ID extends Serializable>
-        extends AbstractServiceImpl<T, ID> implements ReportsService, AbstractService<T, ID> {
+        extends AbstractServiceImpl<T, ID> implements ReportsService<T, ID> {
 
     /**
      * Sole constructor. Receives an {@link ro.teamnet.bootstrap.extend.AppRepository} concrete implementation, usually
