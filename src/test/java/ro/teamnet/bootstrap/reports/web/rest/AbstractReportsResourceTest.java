@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.util.NestedServletException;
 import ro.teamnet.bootstrap.extend.Filters;
 import ro.teamnet.bootstrap.reports.config.ReportsTestConstants;
 import ro.teamnet.bootstrap.reports.domain.Employee;
@@ -233,5 +232,73 @@ public class AbstractReportsResourceTest {
         assertTrue("Wrong value for 'Content-Type' attribute.",
                 result.getResponse().getContentType().equals("application/vnd.ms-xls"));
         assertNotNull(result.getResponse().getContentAsByteArray());
+    }
+
+    @Test
+    public void testingAlternativeMethodToExportToXlsWithEmptyJson() throws Exception {
+        MvcResult result = mockMvc.perform(
+                post("/reports/xls/alternative")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ReportsTestConstants.REPORT_REQUEST_EMPTY_BODY_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        assertTrue("Got wrong HTTP Status in response.",
+                result.getResponse().getStatus() == HttpStatus.BAD_REQUEST.value());
+        assertTrue("Wrong value for 'Content-Type' attribute.",
+                result.getResponse().getContentType().equals("text/plain;charset=ISO-8859-1"));
+        assertNotNull(result.getResponse().getContentAsByteArray());
+    }
+
+    @Test
+    public void testingAlternativeMethodToExportToPdfWithEmptyJson() throws Exception {
+        MvcResult result = mockMvc.perform(
+                post("/reports/pdf/alternative")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ReportsTestConstants.REPORT_REQUEST_EMPTY_BODY_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        assertTrue("Got wrong HTTP Status in response.",
+                result.getResponse().getStatus() == HttpStatus.BAD_REQUEST.value());
+        assertTrue("Wrong value for 'Content-Type' attribute.",
+                result.getResponse().getContentType().equals("text/plain;charset=ISO-8859-1"));
+        assertNotNull(result.getResponse().getContentAsByteArray());
+    }
+
+    @Test
+    public void testingMainExportToXlsMethodWithEmptyJson() throws Exception {
+        MockMvc mockMvc = standaloneSetup(employeeResource)
+                .setCustomArgumentResolvers(
+                        new ReportableArgumentResolver())
+                .build();
+        MvcResult result = mockMvc.perform(
+                post("/reports/xls")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ReportsTestConstants.REPORT_REQUEST_EMPTY_BODY_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        assertTrue("Got wrong HTTP Status in response.",
+                result.getResponse().getStatus() == HttpStatus.BAD_REQUEST.value());
+
+    }
+
+    @Test
+    public void testingMainExportToPdfMethodWithEmptyJson() throws Exception {
+        MockMvc mockMvc = standaloneSetup(employeeResource)
+                .setCustomArgumentResolvers(
+                        new ReportableArgumentResolver())
+                .build();
+        MvcResult result = mockMvc.perform(
+                post("/reports/pdf")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ReportsTestConstants.REPORT_REQUEST_EMPTY_BODY_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        assertTrue("Got wrong HTTP Status in response.",
+                result.getResponse().getStatus() == HttpStatus.BAD_REQUEST.value());
+
     }
 }

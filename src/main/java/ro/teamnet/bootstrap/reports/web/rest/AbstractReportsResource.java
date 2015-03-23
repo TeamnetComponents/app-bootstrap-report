@@ -4,6 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ro.teamnet.bootstrap.reports.domain.Reportable;
@@ -40,13 +41,6 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
     private final ReportsService<T, ID> reportsService;
 
     /**
-     * @return The underlying {@link ro.teamnet.bootstrap.reports.service.ReportsService} instance.
-     */
-    public ReportsService<T, ID> getReportsService() {
-        return reportsService;
-    }
-
-    /**
      * Sole constructor. Initializes an instance of this type with the given
      * {@link ro.teamnet.bootstrap.reports.service.ReportsService}, usually received through <em>Dependency Injection</em>.
      *
@@ -55,6 +49,13 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
     public AbstractReportsResource(ReportsService<T, ID> reportsService) {
         super(reportsService);
         this.reportsService = reportsService;
+    }
+
+    /**
+     * @return The underlying {@link ro.teamnet.bootstrap.reports.service.ReportsService} instance.
+     */
+    public ReportsService<T, ID> getReportsService() {
+        return reportsService;
     }
 
     /**
@@ -124,6 +125,9 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
     @RequestMapping(value = "/reports/pdf/alternative", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> alternativeMethodToExportToPdf(Reportable reportable) {
         //verification here? maybe to return some HttpStatus if there are problems?
+        if (reportable == null) {
+            throw new ReportsException("Invalid or empty JSON format.");
+        }
 
         //opening the bytearrayoutputstream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -141,6 +145,11 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
         return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), httpHeaders, HttpStatus.OK);
     }
 
+    @ExceptionHandler(ReportsException.class)
+    public ResponseEntity<String> catchesAllReportExceptions(ReportsException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     /**
      * An alternative request handler which creates a report from a given {@link ro.teamnet.bootstrap.reports.domain.Reportable} instance
      * and writes the output as <em>Excel (.XLS)</em> in a {@link org.springframework.http.ResponseEntity} of {@link java.lang.Byte}.
@@ -150,7 +159,9 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
     @RequestMapping(value = "/reports/xls/alternative", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> alternativeMethodToExportToXls(Reportable reportable) {
         //verification here? maybe to return some HttpStatus if there are problems?
-
+        if (reportable == null) {
+            throw new ReportsException("Invalid or empty JSON format.");
+        }
         //opening the bytearrayoutputstream
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
