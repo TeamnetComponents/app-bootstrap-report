@@ -47,8 +47,8 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
     }
 
     /**
-     * Sole constructor. Initializes an instance with the given
-     * {@link ro.teamnet.bootstrap.reports.service.ReportsService}.
+     * Sole constructor. Initializes an instance of this type with the given
+     * {@link ro.teamnet.bootstrap.reports.service.ReportsService}, usually received through <em>Dependency Injection</em>.
      *
      * @param reportsService A service offering report generation functionality.
      */

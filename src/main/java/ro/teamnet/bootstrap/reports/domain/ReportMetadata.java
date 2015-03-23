@@ -4,11 +4,12 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Metadata related to report generation. This class holds various report characteristics (such as title, subtitle,
- * extra parameters, etc.)
+ * Metadata related to report generation. This class holds various report characteristics (such as title, subtitle, field and
+ * column metadata, extra parameters etc.). A report's {@code title} and {@code data source fields and columns metadata} are mandatory
+ * fields, and thus should be present in the JSON body.
  *
  * @author Bogdan.Stefan
- * @version 1.0 Date: 2/27/2015
+ * @version 1.0 Date: 2015-02-27
  */
 public class ReportMetadata {
 

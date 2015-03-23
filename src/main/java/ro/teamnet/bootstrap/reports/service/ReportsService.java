@@ -13,7 +13,9 @@ import java.io.Serializable;
 
 /**
  * Interface for {@link org.springframework.stereotype.Service Service} implementations that deal with report generation
- * and exporting.
+ * and exporting. Classes implementing this interface provide the logic required to export reports into various formats.
+ *
+ * @see ro.teamnet.solutions.reportinator.export.jasper.type.ExportType
  *
  * @author Bogdan.Stefan
  * @version 1.0 Date: 2015-02-27

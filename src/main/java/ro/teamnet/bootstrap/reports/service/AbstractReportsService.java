@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -72,7 +73,12 @@ public abstract class AbstractReportsService<T extends Serializable, ID extends 
                     .withTitle(metadata.getTitle())
                     .withDatasource(dataSource)
                     .withTableColumnsMetadata(metadata.getFieldsAndTableColumnMetadata())
-                    .withParameters(metadata.getExtraParametersMap()) // FUTURE This is an optional field. How to call builder method when present?
+                    // Use of the hack below was deliberately done in order to preserve D.R.Y. as much as possible
+                    .withParameters( // Parameters are optional
+                            metadata.getExtraParametersMap() != null ? // thus,
+                                    metadata.getExtraParametersMap() : // use if they are available
+                                    Collections.<String, Object>emptyMap() // or do not use any
+                    )
                     .build();
             // Export
             JasperReportExporter.export(reportGenerator, intoOutputStream, exportType);

@@ -1,6 +1,7 @@
 package ro.teamnet.bootstrap.reports.web.rest;
 
 import org.springframework.web.bind.annotation.RestController;
+import ro.teamnet.bootstrap.reports.domain.Employee;
 import ro.teamnet.bootstrap.reports.service.ReportsService;
 
 import javax.inject.Inject;
@@ -12,12 +13,13 @@ import javax.inject.Inject;
  * @version 1.0 Date: 2015-03-04
  */
 @RestController
-public class EmployeeResource extends AbstractReportsResource {
+public class EmployeeResource extends AbstractReportsResource<Employee, Long> {
 
-    private ReportsService employeeService;
+    private ReportsService<Employee, Long> employeeService;
 
     @Inject
-    public EmployeeResource(ReportsService employeeService) {
+    public EmployeeResource(ReportsService<Employee, Long>  employeeService) {
         super(employeeService);
+        this.employeeService = employeeService;
     }
 }

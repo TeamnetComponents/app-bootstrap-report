@@ -74,6 +74,7 @@ public class ReportableArgumentResolver implements HandlerMethodArgumentResolver
      * @param requestBodyAsInputStream The input stream containing data.
      * @return A {@code JSONObject} instance.
      * @throws JSONException If construction of the JSON Object from the given JSON failed.
+     *
      * @see #JSON_BODY_CONTENT_SIZE Buffer's default size
      * @see #JSON_BODY_CONTENT_EXPECTED_CHARSET Charset to be used
      */
@@ -107,7 +108,6 @@ public class ReportableArgumentResolver implements HandlerMethodArgumentResolver
      * domain entity). A {@code Reportable} must have {@link ro.teamnet.bootstrap.reports.domain.ReportMetadata} and,
      * optionally, filtering and sorting options.
      * <p/>
-     * <p/>
      * {@inheritDoc}
      */
     @Override
@@ -137,7 +137,7 @@ public class ReportableArgumentResolver implements HandlerMethodArgumentResolver
             report.setFilters(filters);
         } catch (JSONException | JsonParseException | JsonMappingException e) {
             // FUTURE Just log this
-            // We "swallow" these since Filters JSON data might not be present
+            // We purposely "swallow" these since Filters JSON data might not be present
         }
         try { // Sort options
             JSONObject sortOptionsJSONObject = jsonContentObject.getJSONObject(JSON_REPORT_SORT_DEFAULT_LOOKUP_KEY);
@@ -163,7 +163,7 @@ public class ReportableArgumentResolver implements HandlerMethodArgumentResolver
             report.setSort(sortOptions);
         } catch (JSONException e) {
             // FUTURE Just log this
-            // We "swallow" these since Sort JSON data might not be present
+            // We purposely "swallow" these since Sort JSON data might not be present
         }
 
         return report;
