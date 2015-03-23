@@ -1,10 +1,10 @@
 package ro.teamnet.bootstrap.reports.config;
 
 /**
- * TODO Documentation
+ * Contains constants to be used in various tests.
  *
  * @author Bogdan.Stefan
- * @version 1.0 Date: 3/12/2015
+ * @version 1.0 Date: 2015-03-12
  */
 public class ReportsTestConstants {
 

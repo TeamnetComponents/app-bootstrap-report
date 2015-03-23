@@ -21,8 +21,13 @@ import java.util.Date;
 
 /**
  * An abstract (template) RESTful controller class which offers report exporting functionality.
- * This class must be extended by any {@link org.springframework.web.bind.annotation.RestController} that intends to use
+ * This class must be extended by any {@link org.springframework.web.bind.annotation.RestController @RestController} that intends to use
  * the contained functionality.
+ * <p>
+ * It makes use of the concept of a {@link ro.teamnet.bootstrap.reports.domain.Reportable}
+ * (and {@link ro.teamnet.bootstrap.reports.domain.resolve.ReportableArgumentResolver ReportableArgumentResolver} respectively),
+ * to pass report data to its handler methods.
+ * </p>
  *
  * @author Bogdan.Iancu
  * @author Andrei.Marica
@@ -42,9 +47,10 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
     }
 
     /**
-     * TODO Doc
+     * Sole constructor. Initializes an instance with the given
+     * {@link ro.teamnet.bootstrap.reports.service.ReportsService}.
      *
-     * @param reportsService
+     * @param reportsService A service offering report generation functionality.
      */
     public AbstractReportsResource(ReportsService<T, ID> reportsService) {
         super(reportsService);
@@ -52,10 +58,11 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
     }
 
     /**
-     * TODO Doc
+     * A request handler which creates a report from a given {@link ro.teamnet.bootstrap.reports.domain.Reportable} instance
+     * and writes the output as <em>.PDF</em> in the {@link javax.servlet.http.HttpServletResponse response}.
      *
-     * @param reportable
-     * @param response
+     * @param reportable An instance received via request (in JSON format).
+     * @param response The servlet response.
      */
     @RequestMapping(value = "/reports/pdf", method = RequestMethod.POST)
     public void exportToPdf(Reportable reportable, HttpServletResponse response) {
@@ -80,10 +87,11 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
     }
 
     /**
-     * TODO Doc
+     * A request handler which creates a report from a given {@link ro.teamnet.bootstrap.reports.domain.Reportable} instance
+     * and writes the output as <em>Excel (.XLS)</em> in the {@link javax.servlet.http.HttpServletResponse response}.
      *
-     * @param reportable
-     * @param response
+     * @param reportable An instance received via request.
+     * @param response The servlet response.
      */
     @RequestMapping(value = "/reports/xls", method = RequestMethod.POST)
     public void exportToXls(Reportable reportable, HttpServletResponse response) {
@@ -108,10 +116,10 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
     }
 
     /**
-     * TODO Doc
+     * An alternative request handler which creates a report from a given {@link ro.teamnet.bootstrap.reports.domain.Reportable} instance
+     * and writes the output as <em>.PDF</em> in a {@link org.springframework.http.ResponseEntity} of {@link java.lang.Byte}.
      *
-     * @param reportable
-     * @return
+     * @param reportable An instance received via request (in JSON format).
      */
     @RequestMapping(value = "/reports/pdf/alternative", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> alternativeMethodToExportToPdf(Reportable reportable) {
@@ -134,10 +142,10 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
     }
 
     /**
-     * TODO Doc
+     * An alternative request handler which creates a report from a given {@link ro.teamnet.bootstrap.reports.domain.Reportable} instance
+     * and writes the output as <em>Excel (.XLS)</em> in a {@link org.springframework.http.ResponseEntity} of {@link java.lang.Byte}.
      *
-     * @param reportable
-     * @return
+     * @param reportable An instance received via request (in JSON format).
      */
     @RequestMapping(value = "/reports/xls/alternative", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> alternativeMethodToExportToXls(Reportable reportable) {

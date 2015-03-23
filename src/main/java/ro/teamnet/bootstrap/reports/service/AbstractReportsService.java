@@ -67,9 +67,9 @@ public abstract class AbstractReportsService<T extends Serializable, ID extends 
                     new BeanCollectionJasperDataSourceConverter<T>(metadata.getFieldMetadata());
             // Obtain data source from converter
             JRDataSource dataSource = dataSourceConverter.convert(entityCollection);
-            // Create a generator using metadata and above data source
+            // Create a generator from built-in templates, using metadata and above data source
             ReportGenerator<JasperPrint> reportGenerator = JasperReportGenerator.builder()
-                    .withTitle(metadata.getTitle()) // FUTURE This is an optional field. How to call builder method when present?
+                    .withTitle(metadata.getTitle())
                     .withDatasource(dataSource)
                     .withTableColumnsMetadata(metadata.getFieldsAndTableColumnMetadata())
                     .withParameters(metadata.getExtraParametersMap()) // FUTURE This is an optional field. How to call builder method when present?
