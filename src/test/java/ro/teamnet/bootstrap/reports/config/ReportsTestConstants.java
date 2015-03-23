@@ -34,6 +34,8 @@ public class ReportsTestConstants {
             "\t}" +
             "}";
 
+    public static final String REPORT_REQUEST_EMPTY_BODY_JSON = "";
+
     public static final String REPORT_REQUEST_BODY_JSON = "{\n" +
                     "\t\"metadata\" : {\n" +
                     "\t\t\"title\" : \"Report title\",\n" +
@@ -51,8 +53,8 @@ public class ReportsTestConstants {
                     "                \"property\" : \"myObjectProperty\",\n" +
                     "                \"value\" : \"hello world\",\n" +
                     "                \"type\" : \"EQUAL\",\n" +
-        //            "                \"negation\" : false,\n" +
-        //            "                \"caseSensitive\" : false\n" +
+//                  "                \"negation\" : false,\n" +
+//                  "                \"caseSensitive\" : false\n" +
                     "            }\n" +
                     "        ]\n" +
                     "\t},\n" +
@@ -61,7 +63,7 @@ public class ReportsTestConstants {
                     "            {\n" +
                     "                \"direction\" : \"DESC\",\n" +
                     "                \"property\" : \"myObjectProperty\",\n" +
-        //            "                \"ignoreCase\" : false,\n" +
+//                  "                \"ignoreCase\" : false,\n" +
                     "                \"nullHandling\" : \"NATIVE\"\n" +
                     "            }\n" +
                     "        ]\n" +
