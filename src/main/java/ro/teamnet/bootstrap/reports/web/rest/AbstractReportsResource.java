@@ -121,6 +121,7 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
      * and writes the output as <em>.PDF</em> in a {@link org.springframework.http.ResponseEntity} of {@link java.lang.Byte}.
      *
      * @param reportable An instance received via request (in JSON format).
+     * @return A {@code ResponseEntity} containing the report byte data.
      */
     @RequestMapping(value = "/reports/pdf/alternative", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> alternativeMethodToExportToPdf(Reportable reportable) {
@@ -155,6 +156,7 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
      * and writes the output as <em>Excel (.XLS)</em> in a {@link org.springframework.http.ResponseEntity} of {@link java.lang.Byte}.
      *
      * @param reportable An instance received via request (in JSON format).
+     * @return A {@code ResponseEntity} containing the report byte data.
      */
     @RequestMapping(value = "/reports/xls/alternative", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> alternativeMethodToExportToXls(Reportable reportable) {
