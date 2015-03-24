@@ -24,6 +24,8 @@
         <maven-javadoc-plugin.version>2.10.1</maven-javadoc-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
         <java-compile.version>1.7</java-compile.version>
+        <junit.version>4.12</junit.version>
+        <mockito-all.version>1.9.5</mockito-all.version>
     </properties>
     <!-- Dependencies -->
     <dependencies>
@@ -36,6 +38,17 @@
             <groupId>ro.teamnet.bootstrap</groupId>
             <artifactId>app-bootstrap-commons</artifactId>
             <version>${app-bootstrap-commons.version}</version>
+        </dependency>
+        <!-- Testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito-all.version}</version>
         </dependency>
     </dependencies>
     <!-- Build -->
