@@ -203,6 +203,23 @@ public class AbstractReportsResourceTest {
     }
 
     @Test
+    public void shoudPassIfContentTypeIsInvalid() throws Exception{
+        MockMvc mockMvc = standaloneSetup(employeeResource)
+                .setCustomArgumentResolvers(
+                        new ReportableArgumentResolver())
+                .build();
+        MvcResult result = mockMvc.perform(
+                post("/reports/wrong")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(ReportsTestConstants.REPORT_REQUEST_BODY_JSON_NO_FILTERS_AND_SORT))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+        assertTrue("Got wrong HTTP Status in response.",
+                result.getResponse().getStatus() == HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
     public void testingAlternativeMethodToExportToPdfWhenReportJsonContainsNoFiltersAndSort() throws Exception {
         MvcResult result = mockMvc.perform(
                 post("/reports/pdf/alternative")

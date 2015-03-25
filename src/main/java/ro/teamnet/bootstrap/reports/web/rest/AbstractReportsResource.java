@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ro.teamnet.bootstrap.reports.domain.Reportable;
@@ -33,7 +34,8 @@ import java.util.Date;
  * @author Bogdan.Iancu
  * @author Andrei.Marica
  * @author Bogdan.Stefan
- * @version 1.0 Date: 2015-03-06
+ * @version 1.01 Date: 2015-03-25
+ * @since 1.0 Date: 2015-03-06
  */
 public abstract class AbstractReportsResource<T extends Serializable, ID extends Serializable>
         extends AbstractResource<T, ID> {
@@ -59,13 +61,69 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
     }
 
     /**
+
+     * A request handler which creates a report from a given {@link ro.teamnet.bootstrap.reports.domain.Reportable} instance
+     * and writes the output in various formats depending on the type parameter in the {@link javax.servlet.http.HttpServletResponse response}.
+     *
+     * @param type the output type of the file
+     * @param reportable An instance received via request (in JSON format).
+     * @param response The servlet response.
+     */
+    @RequestMapping(value = "reports/{type}", method = RequestMethod.POST)
+    public void export(@PathVariable("type") String type, Reportable reportable, HttpServletResponse response){
+        try{
+            if(reportable == null){
+                throw new ReportsException("Invalid or empty report JSON content");
+            }
+            String contentType = generateContentType(type);
+            if(contentType == null){
+                throw new ReportsException("Invalid export format");
+            }
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", String.format("attachment; filename\"Report-%s." + type.toLowerCase() + "\"",
+                    new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
+
+            reportsService.exportFrom(reportable, ExportType.valueOf(type.toUpperCase()), response.getOutputStream());
+        } catch (ReportsException | IOException | IllegalStateException e) {
+            try {
+                // FUTURE Log this error
+                response.sendError(HttpStatus.BAD_REQUEST.value(), "An error has occurred while exporting the " + type + " file : " + e.getMessage());
+            } catch (IOException | IllegalStateException e1) {
+                throw new RuntimeException("A severe error has occurred while exporting the " + type + " file", e1);
+            }
+        }
+
+    }
+
+    /**
+     * Method that returns the MIME type of a given format
+     * @param formatSuffix the suffix of the format
+     * @return the MIME type of the format
+     */
+    private String generateContentType(String formatSuffix){
+        if (formatSuffix.toLowerCase().equals("pdf")){
+            return "application/pdf";
+        }
+        else if (formatSuffix.toLowerCase().equals("xls")){
+            //TODO check if it is application/vnd.ms-excel
+            return "application/vnd.ms-xls";
+        }
+        else if (formatSuffix.toLowerCase().equals("xlsx")){
+            return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        }
+        else
+            return null;
+    }
+
+    /**
      * A request handler which creates a report from a given {@link ro.teamnet.bootstrap.reports.domain.Reportable} instance
      * and writes the output as <em>.PDF</em> in the {@link javax.servlet.http.HttpServletResponse response}.
      *
      * @param reportable An instance received via request (in JSON format).
      * @param response The servlet response.
      */
-    @RequestMapping(value = "/reports/pdf", method = RequestMethod.POST)
+    @Deprecated
+    //@RequestMapping(value = "/reports/pdf", method = RequestMethod.POST)
     public void exportToPdf(Reportable reportable, HttpServletResponse response) {
         try {
             if (reportable == null) {
@@ -94,7 +152,8 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
      * @param reportable An instance received via request.
      * @param response The servlet response.
      */
-    @RequestMapping(value = "/reports/xls", method = RequestMethod.POST)
+    @Deprecated
+    //@RequestMapping(value = "/reports/xls", method = RequestMethod.POST)
     public void exportToXls(Reportable reportable, HttpServletResponse response) {
         try {
             if (reportable == null) {
