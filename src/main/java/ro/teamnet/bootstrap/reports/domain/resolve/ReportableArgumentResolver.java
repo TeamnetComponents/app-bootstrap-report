@@ -104,10 +104,10 @@ public class ReportableArgumentResolver implements HandlerMethodArgumentResolver
     }
 
     /**
-     * Handles requests for {@link ro.teamnet.bootstrap.reports.domain.Reportable} (equivalent of a report's
+     * Handles requests for {@link ro.teamnet.bootstrap.reports.domain.Reportable}s (equivalents of a report's
      * domain entity). A {@code Reportable} must have {@link ro.teamnet.bootstrap.reports.domain.ReportMetadata} and,
      * optionally, filtering and sorting options.
-     * <p/>
+     * <p></p>
      * {@inheritDoc}
      */
     @Override
