@@ -34,7 +34,7 @@ import java.util.Date;
  * @author Bogdan.Iancu
  * @author Andrei.Marica
  * @author Bogdan.Stefan
- * @version 1.01 Date: 2015-03-25
+ * @version 1.0.1 Date: 2015-03-25
  * @since 1.0 Date: 2015-03-06
  */
 public abstract class AbstractReportsResource<T extends Serializable, ID extends Serializable>
@@ -61,22 +61,21 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
     }
 
     /**
-
      * A request handler which creates a report from a given {@link ro.teamnet.bootstrap.reports.domain.Reportable} instance
      * and writes the output in various formats depending on the type parameter in the {@link javax.servlet.http.HttpServletResponse response}.
      *
-     * @param type the output type of the file
+     * @param type       the output type of the file
      * @param reportable An instance received via request (in JSON format).
-     * @param response The servlet response.
+     * @param response   The servlet response.
      */
     @RequestMapping(value = "reports/{type}", method = RequestMethod.POST)
-    public void export(@PathVariable("type") String type, Reportable reportable, HttpServletResponse response){
-        try{
-            if(reportable == null){
+    public void export(@PathVariable("type") String type, Reportable reportable, HttpServletResponse response) {
+        try {
+            if (reportable == null) {
                 throw new ReportsException("Invalid or empty report JSON content");
             }
             String contentType = generateContentType(type);
-            if(contentType == null){
+            if (contentType == null) {
                 throw new ReportsException("Invalid export format");
             }
             response.setContentType(contentType);
@@ -97,22 +96,22 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
 
     /**
      * Method that returns the MIME type of a given format
+     *
      * @param formatSuffix the suffix of the format
      * @return the MIME type of the format
      */
-    private String generateContentType(String formatSuffix){
-        if (formatSuffix.toLowerCase().equals("pdf")){
+    private String generateContentType(String formatSuffix) {
+        if (formatSuffix.toLowerCase().equals("pdf")) {
             return "application/pdf";
         }
-        else if (formatSuffix.toLowerCase().equals("xls")){
-            //TODO check if it is application/vnd.ms-excel
-            return "application/vnd.ms-xls";
+        if (formatSuffix.toLowerCase().equals("xls")) {
+            return "application/vnd.ms-excel";
         }
-        else if (formatSuffix.toLowerCase().equals("xlsx")){
+        if (formatSuffix.toLowerCase().equals("xlsx")) {
             return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         }
-        else
-            return null;
+
+        return null;
     }
 
     /**
@@ -120,7 +119,9 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
      * and writes the output as <em>.PDF</em> in the {@link javax.servlet.http.HttpServletResponse response}.
      *
      * @param reportable An instance received via request (in JSON format).
-     * @param response The servlet response.
+     * @param response   The servlet response.
+     * @deprecated This method has been discontinued in favor of {@link #export(String, Reportable, HttpServletResponse)},
+     * and will be removed in the next major release version.
      */
     @Deprecated
     //@RequestMapping(value = "/reports/pdf", method = RequestMethod.POST)
@@ -150,7 +151,9 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
      * and writes the output as <em>Excel (.XLS)</em> in the {@link javax.servlet.http.HttpServletResponse response}.
      *
      * @param reportable An instance received via request.
-     * @param response The servlet response.
+     * @param response   The servlet response.
+     * @deprecated This method has been discontinued in favor of {@link #export(String, Reportable, HttpServletResponse)},
+     * and will be removed in the next major release version.
      */
     @Deprecated
     //@RequestMapping(value = "/reports/xls", method = RequestMethod.POST)
@@ -205,11 +208,6 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
         return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), httpHeaders, HttpStatus.OK);
     }
 
-    @ExceptionHandler(ReportsException.class)
-    public ResponseEntity<String> catchesAllReportExceptions(ReportsException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
     /**
      * An alternative request handler which creates a report from a given {@link ro.teamnet.bootstrap.reports.domain.Reportable} instance
      * and writes the output as <em>Excel (.XLS)</em> in a {@link org.springframework.http.ResponseEntity} of {@link java.lang.Byte}.
@@ -237,6 +235,11 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
 
         //returning the Response Entity
         return new ResponseEntity<>(byteArrayOutputStream.toByteArray(), httpHeaders, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(ReportsException.class)
+    public ResponseEntity<String> catchesAllReportExceptions(ReportsException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 }
