@@ -79,7 +79,7 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
                 throw new ReportsException("Invalid export format");
             }
             response.setContentType(contentType);
-            response.setHeader("Content-Disposition", String.format("attachment; filename\"Report-%s." + type.toLowerCase() + "\"",
+            response.setHeader("Content-Disposition", String.format("attachment; filename=\"Report-%s." + type.toLowerCase() + "\"",
                     new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
 
             reportsService.exportFrom(reportable, ExportType.valueOf(type.toUpperCase()), response.getOutputStream());
@@ -132,7 +132,7 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
             }
             response.reset();
             response.setContentType("application/pdf");
-            response.setHeader("Content-Disposition", String.format("attachment; filename\"Report-%s.pdf\"",
+            response.setHeader("Content-Disposition", String.format("attachment; filename=\"Report-%s.pdf\"",
                     new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
 
             reportsService.exportFrom(reportable, ExportType.PDF, response.getOutputStream());
@@ -164,7 +164,7 @@ public abstract class AbstractReportsResource<T extends Serializable, ID extends
             }
             response.reset();
             response.setContentType("application/vnd.ms-xls");
-            response.setHeader("Content-Disposition", String.format("attachment; filename\"Report-%s.xls\"",
+            response.setHeader("Content-Disposition", String.format("attachment; filename=\"Report-%s.xls\"",
                     new SimpleDateFormat("yyyy-MM-dd").format(new Date())));
 
             reportsService.exportFrom(reportable, ExportType.XLS, response.getOutputStream());
