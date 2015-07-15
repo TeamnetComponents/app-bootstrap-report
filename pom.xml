@@ -13,7 +13,7 @@
     </parent>
 
     <artifactId>app-bootstrap-reports</artifactId>
-    <version>1.0-RELEASE</version>
+    <version>1.0.1-RELEASE</version>
     <packaging>jar</packaging>
 
     <!-- Dependencies - versions -->
